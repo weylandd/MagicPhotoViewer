@@ -13,6 +13,11 @@
 		FA20CEF21C6D1CF50002ACD9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA20CEF01C6D1CF50002ACD9 /* Main.storyboard */; };
 		FA20CEF41C6D1CF50002ACD9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA20CEF31C6D1CF50002ACD9 /* Assets.xcassets */; };
 		FA20CEF71C6D1CF50002ACD9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA20CEF51C6D1CF50002ACD9 /* LaunchScreen.storyboard */; };
+		FA20CF011C6D1E2E0002ACD9 /* View.m in Sources */ = {isa = PBXBuildFile; fileRef = FA20CF001C6D1E2E0002ACD9 /* View.m */; };
+		FAA980561C6D2034008D4FC1 /* CollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980551C6D2034008D4FC1 /* CollectionCell.m */; };
+		FAA980681C6D2518008D4FC1 /* PhotoController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980601C6D2518008D4FC1 /* PhotoController.m */; };
+		FAA980691C6D2518008D4FC1 /* PhotoPage.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980621C6D2518008D4FC1 /* PhotoPage.m */; };
+		FAA9806A1C6D2518008D4FC1 /* PhotosHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980641C6D2518008D4FC1 /* PhotosHelper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +31,16 @@
 		FA20CEF31C6D1CF50002ACD9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FA20CEF61C6D1CF50002ACD9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FA20CEF81C6D1CF50002ACD9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FA20CEFF1C6D1E2E0002ACD9 /* View.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = View.h; sourceTree = "<group>"; };
+		FA20CF001C6D1E2E0002ACD9 /* View.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = View.m; sourceTree = "<group>"; };
+		FAA980541C6D2034008D4FC1 /* CollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionCell.h; sourceTree = "<group>"; };
+		FAA980551C6D2034008D4FC1 /* CollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CollectionCell.m; sourceTree = "<group>"; };
+		FAA9805F1C6D2518008D4FC1 /* PhotoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoController.h; sourceTree = "<group>"; };
+		FAA980601C6D2518008D4FC1 /* PhotoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoController.m; sourceTree = "<group>"; };
+		FAA980611C6D2518008D4FC1 /* PhotoPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoPage.h; sourceTree = "<group>"; };
+		FAA980621C6D2518008D4FC1 /* PhotoPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoPage.m; sourceTree = "<group>"; };
+		FAA980631C6D2518008D4FC1 /* PhotosHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosHelper.h; sourceTree = "<group>"; };
+		FAA980641C6D2518008D4FC1 /* PhotosHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosHelper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,10 +73,15 @@
 		FA20CEE61C6D1CF50002ACD9 /* MagicPhotoViewer */ = {
 			isa = PBXGroup;
 			children = (
+				FAA980571C6D2518008D4FC1 /* Forbidden magic */,
 				FA20CEEA1C6D1CF50002ACD9 /* AppDelegate.h */,
 				FA20CEEB1C6D1CF50002ACD9 /* AppDelegate.m */,
 				FA20CEED1C6D1CF50002ACD9 /* ViewController.h */,
 				FA20CEEE1C6D1CF50002ACD9 /* ViewController.m */,
+				FA20CEFF1C6D1E2E0002ACD9 /* View.h */,
+				FA20CF001C6D1E2E0002ACD9 /* View.m */,
+				FAA980541C6D2034008D4FC1 /* CollectionCell.h */,
+				FAA980551C6D2034008D4FC1 /* CollectionCell.m */,
 				FA20CEF01C6D1CF50002ACD9 /* Main.storyboard */,
 				FA20CEF31C6D1CF50002ACD9 /* Assets.xcassets */,
 				FA20CEF51C6D1CF50002ACD9 /* LaunchScreen.storyboard */,
@@ -77,6 +97,19 @@
 				FA20CEE81C6D1CF50002ACD9 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FAA980571C6D2518008D4FC1 /* Forbidden magic */ = {
+			isa = PBXGroup;
+			children = (
+				FAA9805F1C6D2518008D4FC1 /* PhotoController.h */,
+				FAA980601C6D2518008D4FC1 /* PhotoController.m */,
+				FAA980611C6D2518008D4FC1 /* PhotoPage.h */,
+				FAA980621C6D2518008D4FC1 /* PhotoPage.m */,
+				FAA980631C6D2518008D4FC1 /* PhotosHelper.h */,
+				FAA980641C6D2518008D4FC1 /* PhotosHelper.m */,
+			);
+			path = "Forbidden magic";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -149,9 +182,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA20CF011C6D1E2E0002ACD9 /* View.m in Sources */,
+				FAA980561C6D2034008D4FC1 /* CollectionCell.m in Sources */,
 				FA20CEEF1C6D1CF50002ACD9 /* ViewController.m in Sources */,
 				FA20CEEC1C6D1CF50002ACD9 /* AppDelegate.m in Sources */,
+				FAA9806A1C6D2518008D4FC1 /* PhotosHelper.m in Sources */,
+				FAA980691C6D2518008D4FC1 /* PhotoPage.m in Sources */,
 				FA20CEE91C6D1CF50002ACD9 /* main.m in Sources */,
+				FAA980681C6D2518008D4FC1 /* PhotoController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,6 +300,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = MagicPhotoViewer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.MagicPhotoViewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -273,6 +312,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = MagicPhotoViewer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.MagicPhotoViewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -298,6 +338,7 @@
 				FA20CEFD1C6D1CF60002ACD9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
