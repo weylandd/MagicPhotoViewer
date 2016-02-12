@@ -11,8 +11,9 @@ static const NSInteger MGCPhotosOffset = 5;
 
 @interface ImageViewer () <UIScrollViewDelegate, ImagePageDelegate>
 
-@property (nonatomic, strong) NSArray<UIImageView *> *photos;
 @property (nonatomic, assign) NSInteger currentPage;
+@property (nonatomic, assign) NSInteger nextPage;
+@property (nonatomic, assign) NSInteger lastPage;
 @property (nonatomic, strong) CodeBlock closeBlock;
 
 @property (nonatomic, strong) UIScrollView *scrollView;
@@ -38,9 +39,9 @@ static const NSInteger MGCPhotosOffset = 5;
 
 - (void)openPhotos:(NSArray<UIImageView *> *)photos currentIndex:(NSInteger)index close:(CodeBlock)close
 {
-    self.photos = photos;
     self.currentPage = index;
     self.closeBlock = close;
+    [self _createPages];
     [self _layoutScrollView];
     [self _layoutPages];
     [self _openAnimation];
@@ -49,21 +50,14 @@ static const NSInteger MGCPhotosOffset = 5;
 
 #pragma mark - Setters
 
-- (void)setPhotos:(NSArray<UIImageView *> *)photos
-{
-    _photos = photos;
-    [self _createPages];
-}
-
 - (void)setCurrentPage:(NSInteger)currentPage
 {
+    UIImageView *lastImageView = [self.dataSource imageViewer:self imageViewForIndex:_currentPage];
+    UIImageView *newImageView = [self.dataSource imageViewer:self imageViewForIndex:currentPage];
     _currentPage = currentPage;
-    for (UIImageView *imageView in self.photos)
-    {
-        imageView.hidden = NO;
-    }
-    UIImageView *imageView = self.photos[currentPage];
-    imageView.hidden = YES;
+    
+    lastImageView.hidden = NO;
+    newImageView.hidden = YES;
 }
 
 #pragma mark - > Layout <
@@ -131,11 +125,6 @@ static const NSInteger MGCPhotosOffset = 5;
 
 #pragma mark - <UIScrollViewDelegate>
 
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
-{
-    [self _calculateNextPage:scrollView];
-}
-
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     if (self.isRotation)
@@ -144,12 +133,44 @@ static const NSInteger MGCPhotosOffset = 5;
     }
     CGRect rect = self.scrollView.bounds;
     CGFloat originX = scrollView.contentOffset.x;
-    NSInteger page = roundf(originX / CGRectGetWidth(rect));
+    CGFloat page = originX / CGRectGetWidth(rect);
+    NSInteger currentPage = roundf(page);
+    NSInteger nextPage = self.nextPage;
+    NSInteger lastPage = self.lastPage;
     
-    if (page != self.currentPage)
+    if (page < currentPage)
     {
-        self.currentPage = page;
-        [self _calculateNextPage:scrollView];
+        lastPage = floorf(page);
+    }
+    else if (page > currentPage)
+    {
+        nextPage = ceilf(page);
+    }
+    else
+    {
+        nextPage = currentPage + 1;
+        lastPage = currentPage - 1;
+    }
+    
+    if (currentPage != self.currentPage)
+    {
+        self.currentPage = currentPage;
+    }
+    if (nextPage != self.nextPage)
+    {
+        self.nextPage = nextPage;
+        if (self.lastPage == nextPage - 2)
+        {
+            [self _prepareTwoPages];
+        }
+    }
+    if (lastPage != self.lastPage)
+    {
+        self.lastPage = lastPage;
+        if (self.nextPage == lastPage + 2)
+        {
+            [self _prepareTwoPages];
+        }
     }
 }
 
@@ -165,12 +186,7 @@ static const NSInteger MGCPhotosOffset = 5;
 - (void)closePhoto:(UIImageView *)photo;
 {
     [self _closeAnimationWith:photo completed:^{
-        [self dismissViewControllerAnimated:NO completion:^{
-            if (self.closeBlock)
-            {
-                self.closeBlock();
-            }
-        }];
+        [self _dismiss];
     }];
 }
 
@@ -181,9 +197,23 @@ static const NSInteger MGCPhotosOffset = 5;
 
 #pragma mark - Animations
 
+- (void)_dismiss
+{
+    [self dismissViewControllerAnimated:NO completion:^{
+        if (self.closeBlock)
+        {
+            self.closeBlock();
+        }
+    }];
+}
+
 - (void)_openAnimation
 {
-    UIImageView *image = self.photos[self.currentPage];
+    UIImageView *image = [self.dataSource imageViewer:self imageViewForIndex:self.currentPage];
+    if (!image)
+    {
+        [self _dismiss];
+    }
     CGRect rect = [image convertRect:image.frame toView:nil];
     
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:rect];
@@ -210,7 +240,7 @@ static const NSInteger MGCPhotosOffset = 5;
 
 - (void)_closeAnimationWith:(UIImageView *)photo completed:(void(^)())completed
 {
-    UIImageView *image = self.photos[self.currentPage];
+    UIImageView *image = [self.dataSource imageViewer:self imageViewForIndex:self.currentPage];
     CGRect rect = [image convertRect:image.frame toView:nil];
     [UIView animateWithDuration:0.2 animations:^{
         photo.frame = rect;
@@ -248,43 +278,32 @@ static const NSInteger MGCPhotosOffset = 5;
 
 #pragma mark - Private methods
 
-- (void)_calculateNextPage:(UIScrollView *)scrollView
+- (void)_prepareTwoPages
 {
-    UIPanGestureRecognizer *pan = [scrollView panGestureRecognizer];
-    CGFloat velocity = [pan velocityInView:pan.view].x;
-    if (velocity < 0)
-    {
-        [self _preparePage:self.currentPage + 1];
-    }
-    else if (velocity > 0)
-    {
-        [self _preparePage:self.currentPage -1];
-    }
+    [self _preparePage:self.currentPage + 1];
+    [self _preparePage:self.currentPage - 1];
 }
 
 - (void)_preparePage:(NSInteger)index
 {
-    if (index < 0 || index >= self.photos.count)
+    NSInteger count = [self.dataSource numberOfItemsImageViewer:self];
+    if (index < 0 || index >= count)
     {
         return;
     }
     ImagePage *page = self.pages[index];
     if (!page.image)
     {
-        UIImageView *imageView = self.photos[index];
-        page.image = imageView.image;
+        page.image = [self.dataSource imageViewer:self imageForIndex:index];
     }
     [page prepareForShow];
 }
 
 - (void)_createPages
 {
-    if (!self.photos)
-    {
-        return;
-    }
+    NSInteger count = [self.dataSource numberOfItemsImageViewer:self];
     NSMutableArray *pages = [NSMutableArray new];
-    for (NSInteger index = 0; index < self.photos.count; index++)
+    for (NSInteger index = 0; index < count; index++)
     {
         ImagePage *page = [ImagePage new];
         page.delegate = self;

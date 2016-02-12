@@ -4,12 +4,12 @@
 
 #import "MagicPhotoViewer.h"
 #import "ImageViewer.h"
+#import "CustomImageViewer.h"
 
 #define RootViewController [[UIApplication sharedApplication] keyWindow].rootViewController
 
-@interface MagicPhotoViewer () <ImageViewerDelegate, ImageViewerDataSource>
+@interface MagicPhotoViewer () <CustomImageViewerDelegate, CustomImageViewerDataSource>
 
-@property (nonatomic, strong) ImageViewer *photoController;
 @property (nonatomic, strong) NSArray *photos;
 
 @end
@@ -28,20 +28,42 @@
 
 - (void)openPhotos:(NSArray<UIImageView *> *)photos currentIndex:(NSInteger)index close:(CodeBlock)close
 {
-    self.photoController = [ImageViewer new];
-    self.photoController.delegate = self;
-    [self.photoController setModalPresentationStyle:UIModalPresentationOverCurrentContext];
-    [self.photoController setupInitialState];
-    [RootViewController presentViewController:self.photoController animated:NO completion:^{
-        [self.photoController openPhotos:photos currentIndex:index close:close];
+    self.photos = photos;
+    CustomImageViewer *imageViewer = [self _imageViewer];
+    [imageViewer setModalPresentationStyle:UIModalPresentationOverCurrentContext];
+    [imageViewer setupInitialState];
+    [RootViewController presentViewController:imageViewer animated:NO completion:^{
+        [imageViewer openPhotos:photos currentIndex:index close:close];
     }];
 }
 
 #pragma mark - <PhotoControllerDataSource>
 
-//- (UIImage *)imageForIndex:(NSInteger)index
-//{
-//    
-//}
+- (UIImage *)imageViewer:(ImageViewer *)imageViewer imageForIndex:(NSInteger)index
+{
+    UIImageView *imageView = self.photos[index];
+    return imageView.image;
+}
+
+- (UIImageView *)imageViewer:(ImageViewer *)imageViewer imageViewForIndex:(NSInteger)index
+{
+    UIImageView *imageView = self.photos[index];
+    return imageView;
+}
+
+- (NSUInteger)numberOfItemsImageViewer:(ImageViewer *)imageViewer
+{
+    return self.photos.count;
+}
+
+#pragma mark - Lazy initialization
+
+- (CustomImageViewer *)_imageViewer
+{
+    CustomImageViewer *imageViewer = [CustomImageViewer new];
+    imageViewer.customDelegate = self;
+    imageViewer.customDataSource = self;
+    return imageViewer;
+}
 
 @end
