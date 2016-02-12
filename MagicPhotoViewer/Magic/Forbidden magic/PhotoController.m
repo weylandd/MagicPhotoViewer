@@ -255,7 +255,7 @@ static const NSInteger MGCPhotosOffset = 5;
     {
         [self _preparePage:self.currentPage + 1];
     }
-    else
+    else if (velocity > 0)
     {
         [self _preparePage:self.currentPage -1];
     }
