@@ -31,6 +31,7 @@
     self.photoController.delegate = self;
     [self.photoController setModalPresentationStyle:UIModalPresentationOverCurrentContext];
     [RootViewController presentViewController:self.photoController animated:NO completion:^{
+        [self.photoController setupInitialState];
         [self.photoController openPhotos:photos currentIndex:index close:close];
     }];
 }

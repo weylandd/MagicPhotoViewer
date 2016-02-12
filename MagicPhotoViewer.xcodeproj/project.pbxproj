@@ -15,9 +15,9 @@
 		FA20CEF71C6D1CF50002ACD9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA20CEF51C6D1CF50002ACD9 /* LaunchScreen.storyboard */; };
 		FA20CF011C6D1E2E0002ACD9 /* View.m in Sources */ = {isa = PBXBuildFile; fileRef = FA20CF001C6D1E2E0002ACD9 /* View.m */; };
 		FAA980561C6D2034008D4FC1 /* CollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980551C6D2034008D4FC1 /* CollectionCell.m */; };
-		FAA980681C6D2518008D4FC1 /* PhotoController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980601C6D2518008D4FC1 /* PhotoController.m */; };
-		FAA980691C6D2518008D4FC1 /* PhotoPage.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980621C6D2518008D4FC1 /* PhotoPage.m */; };
-		FAA9806A1C6D2518008D4FC1 /* PhotosHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980641C6D2518008D4FC1 /* PhotosHelper.m */; };
+		FAA980741C6E1EF7008D4FC1 /* PhotoController.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA9806F1C6E1EF7008D4FC1 /* PhotoController.m */; };
+		FAA980751C6E1EF7008D4FC1 /* PhotoPage.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980711C6E1EF7008D4FC1 /* PhotoPage.m */; };
+		FAA980761C6E1EF7008D4FC1 /* PhotosHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980731C6E1EF7008D4FC1 /* PhotosHelper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,12 +35,12 @@
 		FA20CF001C6D1E2E0002ACD9 /* View.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = View.m; sourceTree = "<group>"; };
 		FAA980541C6D2034008D4FC1 /* CollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionCell.h; sourceTree = "<group>"; };
 		FAA980551C6D2034008D4FC1 /* CollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CollectionCell.m; sourceTree = "<group>"; };
-		FAA9805F1C6D2518008D4FC1 /* PhotoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoController.h; sourceTree = "<group>"; };
-		FAA980601C6D2518008D4FC1 /* PhotoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoController.m; sourceTree = "<group>"; };
-		FAA980611C6D2518008D4FC1 /* PhotoPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoPage.h; sourceTree = "<group>"; };
-		FAA980621C6D2518008D4FC1 /* PhotoPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoPage.m; sourceTree = "<group>"; };
-		FAA980631C6D2518008D4FC1 /* PhotosHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosHelper.h; sourceTree = "<group>"; };
-		FAA980641C6D2518008D4FC1 /* PhotosHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosHelper.m; sourceTree = "<group>"; };
+		FAA9806E1C6E1EF7008D4FC1 /* PhotoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoController.h; sourceTree = "<group>"; };
+		FAA9806F1C6E1EF7008D4FC1 /* PhotoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoController.m; sourceTree = "<group>"; };
+		FAA980701C6E1EF7008D4FC1 /* PhotoPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoPage.h; sourceTree = "<group>"; };
+		FAA980711C6E1EF7008D4FC1 /* PhotoPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoPage.m; sourceTree = "<group>"; };
+		FAA980721C6E1EF7008D4FC1 /* PhotosHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosHelper.h; sourceTree = "<group>"; };
+		FAA980731C6E1EF7008D4FC1 /* PhotosHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosHelper.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,7 +73,7 @@
 		FA20CEE61C6D1CF50002ACD9 /* MagicPhotoViewer */ = {
 			isa = PBXGroup;
 			children = (
-				FAA980571C6D2518008D4FC1 /* Forbidden magic */,
+				FAA9806C1C6E1EF7008D4FC1 /* Magic */,
 				FA20CEEA1C6D1CF50002ACD9 /* AppDelegate.h */,
 				FA20CEEB1C6D1CF50002ACD9 /* AppDelegate.m */,
 				FA20CEED1C6D1CF50002ACD9 /* ViewController.h */,
@@ -99,15 +99,23 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		FAA980571C6D2518008D4FC1 /* Forbidden magic */ = {
+		FAA9806C1C6E1EF7008D4FC1 /* Magic */ = {
 			isa = PBXGroup;
 			children = (
-				FAA9805F1C6D2518008D4FC1 /* PhotoController.h */,
-				FAA980601C6D2518008D4FC1 /* PhotoController.m */,
-				FAA980611C6D2518008D4FC1 /* PhotoPage.h */,
-				FAA980621C6D2518008D4FC1 /* PhotoPage.m */,
-				FAA980631C6D2518008D4FC1 /* PhotosHelper.h */,
-				FAA980641C6D2518008D4FC1 /* PhotosHelper.m */,
+				FAA9806D1C6E1EF7008D4FC1 /* Forbidden magic */,
+				FAA980721C6E1EF7008D4FC1 /* PhotosHelper.h */,
+				FAA980731C6E1EF7008D4FC1 /* PhotosHelper.m */,
+			);
+			path = Magic;
+			sourceTree = "<group>";
+		};
+		FAA9806D1C6E1EF7008D4FC1 /* Forbidden magic */ = {
+			isa = PBXGroup;
+			children = (
+				FAA9806E1C6E1EF7008D4FC1 /* PhotoController.h */,
+				FAA9806F1C6E1EF7008D4FC1 /* PhotoController.m */,
+				FAA980701C6E1EF7008D4FC1 /* PhotoPage.h */,
+				FAA980711C6E1EF7008D4FC1 /* PhotoPage.m */,
 			);
 			path = "Forbidden magic";
 			sourceTree = "<group>";
@@ -183,13 +191,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA20CF011C6D1E2E0002ACD9 /* View.m in Sources */,
+				FAA980751C6E1EF7008D4FC1 /* PhotoPage.m in Sources */,
 				FAA980561C6D2034008D4FC1 /* CollectionCell.m in Sources */,
+				FAA980741C6E1EF7008D4FC1 /* PhotoController.m in Sources */,
 				FA20CEEF1C6D1CF50002ACD9 /* ViewController.m in Sources */,
 				FA20CEEC1C6D1CF50002ACD9 /* AppDelegate.m in Sources */,
-				FAA9806A1C6D2518008D4FC1 /* PhotosHelper.m in Sources */,
-				FAA980691C6D2518008D4FC1 /* PhotoPage.m in Sources */,
+				FAA980761C6E1EF7008D4FC1 /* PhotosHelper.m in Sources */,
 				FA20CEE91C6D1CF50002ACD9 /* main.m in Sources */,
-				FAA980681C6D2518008D4FC1 /* PhotoController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

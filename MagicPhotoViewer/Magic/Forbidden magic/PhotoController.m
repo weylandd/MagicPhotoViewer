@@ -29,6 +29,12 @@ static const NSInteger kPhotosOffset = 5;
     [self setNeedsStatusBarAppearanceUpdate];
 }
 
+- (void)setupInitialState
+{
+    self.view.alpha = 0;
+    self.view.backgroundColor = [UIColor blackColor];
+}
+
 - (void)openPhotos:(NSArray<UIImageView *> *)photos currentIndex:(NSInteger)index close:(CodeBlock)close
 {
     self.photos = photos;
@@ -39,7 +45,7 @@ static const NSInteger kPhotosOffset = 5;
     [self _openAnimation];
 }
 
-#pragma mark - setters UITableView
+#pragma mark - Setters
 
 - (void)setPhotos:(NSArray<UIImageView *> *)photos
 {
@@ -57,7 +63,7 @@ static const NSInteger kPhotosOffset = 5;
     image.hidden = YES;
 }
 
-#pragma mark - > layout <
+#pragma mark - > Layout <
 
 - (void)viewWillLayoutSubviews
 {
@@ -90,27 +96,27 @@ static const NSInteger kPhotosOffset = 5;
     self.isRotation = NO;
 }
 
-#pragma mark - actions
+#pragma mark - Actions
 
-- (void)leftButtonDidPressed
-{
-    [self _closeAnimationCompleted:^{
-        [self.delegate closeController];
-        if (self.closeBlock)
-        {
-            self.closeBlock();
-        }
-    }];
-}
+//- (void)leftButtonDidPressed
+//{
+//    [self _closeAnimationCompleted:^{
+//        [self.delegate closeController];
+//        if (self.closeBlock)
+//        {
+//            self.closeBlock();
+//        }
+//    }];
+//}
 
-- (void)actionButtonTapped
-{
-    UIImageView *image = self.photos[self.currentPage];
-    UIActivityViewController *activityController = [[UIActivityViewController alloc] initWithActivityItems:@[image.image] applicationActivities:nil];
-    [self presentViewController:activityController animated:YES completion:nil];
-}
+//- (void)actionButtonTapped
+//{
+//    UIImageView *image = self.photos[self.currentPage];
+//    UIActivityViewController *activityController = [[UIActivityViewController alloc] initWithActivityItems:@[image.image] applicationActivities:nil];
+//    [self presentViewController:activityController animated:YES completion:nil];
+//}
 
-#pragma mark - scroll
+#pragma mark - Scroll
 
 - (void)_scrollToIndex:(NSInteger)index animated:(BOOL)animated
 {
@@ -120,12 +126,7 @@ static const NSInteger kPhotosOffset = 5;
     [self.scrollView scrollRectToVisible:rect animated:animated];
 }
 
-#pragma mark - UIScrollViewDelegate
-
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
-{
-    self.view.backgroundColor = [UIColor blackColor];
-}
+#pragma mark - <UIScrollViewDelegate>
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
@@ -164,17 +165,16 @@ static const NSInteger kPhotosOffset = 5;
     }];
 }
 
-- (void)photoWillDragging
+- (void)changeBackgroundAlpha:(CGFloat)alpha
 {
-    self.view.backgroundColor = [UIColor clearColor];
+    self.view.backgroundColor = [UIColor colorWithWhite:0 alpha:alpha];
 }
 
-#pragma mark - animations
+#pragma mark - Animations
 
 - (void)_openAnimation
 {
     self.view.userInteractionEnabled = NO;
-    self.view.alpha = 0;
     UIImageView *image = self.photos[self.currentPage];
     CGRect rect = [image convertRect:image.frame toView:nil];
     
@@ -206,6 +206,7 @@ static const NSInteger kPhotosOffset = 5;
     CGRect rect = [image convertRect:image.frame toView:nil];
     [UIView animateWithDuration:0.2 animations:^{
         photo.frame = rect;
+        self.view.alpha = 0;
     } completion:^(BOOL finished) {
         [photo removeFromSuperview];
         image.hidden = NO;
@@ -216,28 +217,28 @@ static const NSInteger kPhotosOffset = 5;
     }];
 }
 
-- (void)_closeAnimationCompleted:(void(^)())completed
-{
-    UIImageView *image = self.photos[self.currentPage];
-    image.hidden = NO;
-    [UIView animateWithDuration:0.2 animations:^{
-        self.view.alpha = 0;
-    } completion:^(BOOL finished) {
-        if (completed)
-        {
-            completed();
-        }
-    }];
-}
+//- (void)_closeAnimationCompleted:(void(^)())completed
+//{
+//    UIImageView *image = self.photos[self.currentPage];
+//    image.hidden = NO;
+//    [UIView animateWithDuration:0.2 animations:^{
+//        self.view.alpha = 0;
+//    } completion:^(BOOL finished) {
+//        if (completed)
+//        {
+//            completed();
+//        }
+//    }];
+//}
 
-#pragma mark - status bar
+#pragma mark - Status bar
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleLightContent;
 }
 
-#pragma mark - private methods
+#pragma mark - Private methods
 
 - (void)_scrollToLeft
 {
@@ -289,7 +290,7 @@ static const NSInteger kPhotosOffset = 5;
     return origin;
 }
 
-#pragma mark - lazy initialization
+#pragma mark - Lazy initialization
 
 - (UIScrollView *)scrollView
 {

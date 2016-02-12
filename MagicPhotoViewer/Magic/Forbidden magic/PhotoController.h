@@ -9,6 +9,8 @@
 
 @property (nonatomic, weak) id<PhotoControllerDelegate> delegate;
 
+- (void)setupInitialState;
+
 - (void)openPhotos:(NSArray<UIImageView *> *)photos currentIndex:(NSInteger)index close:(CodeBlock)close;
 
 @end
