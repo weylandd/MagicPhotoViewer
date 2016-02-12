@@ -18,6 +18,8 @@ static const CGFloat MGCMinBacgroundOpacity = 0.3;
 @property (nonatomic, assign) CGFloat previousScale;
 @property (nonatomic, assign) CGPoint lastPoint;
 @property (nonatomic, assign) CGFloat currentScale;
+@property (nonatomic, assign) BOOL isZooming;
+@property (nonatomic, assign) BOOL isAnimated;
 
 @end
 
@@ -51,7 +53,7 @@ static const CGFloat MGCMinBacgroundOpacity = 0.3;
 
 - (void)handleDoubleTap:(UIGestureRecognizer *)gestureRecognizer
 {
-    if (!self.image)
+    if (!self.image || self.isZooming || self.isAnimated)
     {
         return;
     }
@@ -102,6 +104,11 @@ static const CGFloat MGCMinBacgroundOpacity = 0.3;
 
 #pragma mark - <UIScrollViewDelegate>
 
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    self.isAnimated = YES;
+}
+
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
     if ([self _isScrollScale])
@@ -113,6 +120,11 @@ static const CGFloat MGCMinBacgroundOpacity = 0.3;
     {
         [self _closeAnimation];
     }
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    self.isAnimated = NO;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -133,6 +145,16 @@ static const CGFloat MGCMinBacgroundOpacity = 0.3;
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
     [self _centerImageView];
+}
+
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view
+{
+    self.isZooming = YES;
+}
+
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view atScale:(CGFloat)scale
+{
+    self.isZooming = NO;
 }
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView

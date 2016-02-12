@@ -33,6 +33,7 @@ static const NSInteger MGCPhotosOffset = 5;
 {
     self.view.alpha = 0;
     self.view.backgroundColor = [UIColor blackColor];
+    self.view.userInteractionEnabled = NO;
 }
 
 - (void)openPhotos:(NSArray<UIImageView *> *)photos currentIndex:(NSInteger)index close:(CodeBlock)close
@@ -181,7 +182,6 @@ static const NSInteger MGCPhotosOffset = 5;
 
 - (void)_openAnimation
 {
-    self.view.userInteractionEnabled = NO;
     UIImageView *image = self.photos[self.currentPage];
     CGRect rect = [image convertRect:image.frame toView:nil];
     

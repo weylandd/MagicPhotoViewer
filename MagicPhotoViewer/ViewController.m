@@ -14,6 +14,7 @@
 @interface ViewController () <CollectionCellDelegate, UICollectionViewDelegate, UICollectionViewDataSource>
 
 @property (nonatomic, strong) View *mainView;
+@property (nonatomic, assign) NSInteger currentIndex;
 
 @end
 
@@ -31,7 +32,7 @@
 
 - (void)cellDidSelected:(CollectionCell *)cell
 {
-    [PhotosViewer openPhotos:[self _imageViews] currentIndex:cell.index close:nil];
+    [PhotosViewer openPhotos:[self _imageViewsWithSelectedCell:cell] currentIndex:self.currentIndex close:nil];
 }
 
 #pragma mark - <UICollectionViewDelegate>
@@ -86,13 +87,16 @@
     return cells;
 }
 
-- (NSArray *)_imageViews
+- (NSArray *)_imageViewsWithSelectedCell:(CollectionCell *)selectedCell
 {
     NSMutableArray *imageViews = [NSMutableArray new];
-    for (CollectionCell *cell in [self _visibleCells])
-    {
+    [[self _visibleCells] enumerateObjectsUsingBlock:^(CollectionCell * _Nonnull cell, NSUInteger idx, BOOL * _Nonnull stop) {
         [imageViews addObject:cell.imageView];
-    }
+        if ([cell isEqual:selectedCell])
+        {
+            self.currentIndex = idx;
+        }
+    }];
     return imageViews;
 }
 
