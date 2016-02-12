@@ -7,7 +7,7 @@
 
 #define RootView [[UIApplication sharedApplication] keyWindow].rootViewController.view
 
-static const NSInteger kPhotosOffset = 5;
+static const NSInteger MGCPhotosOffset = 5;
 
 @interface PhotoController () <UIScrollViewDelegate, PhotoViewDelegate>
 
@@ -43,6 +43,7 @@ static const NSInteger kPhotosOffset = 5;
     [self _layoutScrollView];
     [self _layoutPages];
     [self _openAnimation];
+    [self _preparePage:index];
 }
 
 #pragma mark - Setters
@@ -56,11 +57,12 @@ static const NSInteger kPhotosOffset = 5;
 - (void)setCurrentPage:(NSInteger)currentPage
 {
     _currentPage = currentPage;
-    [self.photos enumerateObjectsUsingBlock:^(UIImageView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        obj.hidden = NO;
-    }];
-    UIImageView *image = self.photos[self.currentPage];
-    image.hidden = YES;
+    for (UIImageView *imageView in self.photos)
+    {
+        imageView.hidden = NO;
+    }
+    UIImageView *imageView = self.photos[currentPage];
+    imageView.hidden = YES;
 }
 
 #pragma mark - > Layout <
@@ -74,8 +76,8 @@ static const NSInteger kPhotosOffset = 5;
 - (void)_layoutScrollView
 {
     CGRect rect = self.view.bounds;
-    rect.origin.x -= kPhotosOffset;
-    rect.size.width += kPhotosOffset * 2;
+    rect.origin.x -= MGCPhotosOffset;
+    rect.size.width += MGCPhotosOffset * 2;
     self.scrollView.frame = rect;
 }
 
@@ -83,9 +85,9 @@ static const NSInteger kPhotosOffset = 5;
 {
     __block CGRect rect = self.scrollView.bounds;
     NSInteger width = CGRectGetWidth(rect);
-    rect.size.width -= kPhotosOffset * 2;
+    rect.size.width -= MGCPhotosOffset * 2;
     [self.pages enumerateObjectsUsingBlock:^(PhotoPage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        rect.origin.x = width * idx + kPhotosOffset;
+        rect.origin.x = width * idx + MGCPhotosOffset;
         obj.frame = rect;
     }];
     
@@ -121,12 +123,17 @@ static const NSInteger kPhotosOffset = 5;
 - (void)_scrollToIndex:(NSInteger)index animated:(BOOL)animated
 {
     CGRect rect = self.scrollView.bounds;
-    rect.origin.x = index * CGRectGetWidth(rect) + kPhotosOffset;
-    rect.size.width -= kPhotosOffset * 2;
+    rect.origin.x = index * CGRectGetWidth(rect) + MGCPhotosOffset;
+    rect.size.width -= MGCPhotosOffset * 2;
     [self.scrollView scrollRectToVisible:rect animated:animated];
 }
 
 #pragma mark - <UIScrollViewDelegate>
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    [self _calculateNextPage:scrollView];
+}
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
@@ -137,12 +144,12 @@ static const NSInteger kPhotosOffset = 5;
     CGRect rect = self.scrollView.bounds;
     CGFloat originX = scrollView.contentOffset.x;
     NSInteger page = roundf(originX / CGRectGetWidth(rect));
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if (page != self.currentPage)
-        {
-            self.currentPage = page;
-        }
-    });
+    
+    if (page != self.currentPage)
+    {
+        self.currentPage = page;
+        [self _calculateNextPage:scrollView];
+    }
 }
 
 #pragma mark - Orientation
@@ -240,9 +247,33 @@ static const NSInteger kPhotosOffset = 5;
 
 #pragma mark - Private methods
 
-- (void)_scrollToLeft
+- (void)_calculateNextPage:(UIScrollView *)scrollView
 {
-    [self.scrollView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+    UIPanGestureRecognizer *pan = [scrollView panGestureRecognizer];
+    CGFloat velocity = [pan velocityInView:pan.view].x;
+    if (velocity < 0)
+    {
+        [self _preparePage:self.currentPage + 1];
+    }
+    else
+    {
+        [self _preparePage:self.currentPage -1];
+    }
+}
+
+- (void)_preparePage:(NSInteger)index
+{
+    if (index < 0 || index >= self.photos.count)
+    {
+        return;
+    }
+    PhotoPage *page = self.pages[index];
+    if (!page.image)
+    {
+        UIImageView *imageView = self.photos[index];
+        page.image = imageView.image;
+    }
+    [page prepareForShow];
 }
 
 - (void)_createPages
@@ -252,11 +283,11 @@ static const NSInteger kPhotosOffset = 5;
         return;
     }
     NSMutableArray *pages = [NSMutableArray new];
-    for (UIImageView *imageView in self.photos)
+    for (NSInteger index = 0; index < self.photos.count; index++)
     {
         PhotoPage *photoPage = [PhotoPage new];
         photoPage.delegate = self;
-        photoPage.image = imageView.image;
+        photoPage.index = index;
         [self.scrollView addSubview:photoPage];
         [pages addObject:photoPage];
     }

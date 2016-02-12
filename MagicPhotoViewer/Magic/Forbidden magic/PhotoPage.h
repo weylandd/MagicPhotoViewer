@@ -9,6 +9,9 @@
 
 @property (nonatomic, weak) id<PhotoViewDelegate> delegate;
 @property (nonatomic, strong) UIImage *image;
+@property (nonatomic, assign) NSInteger index;
+
+- (void)prepareForShow;
 
 @end
 

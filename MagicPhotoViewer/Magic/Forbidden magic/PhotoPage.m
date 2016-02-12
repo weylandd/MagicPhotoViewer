@@ -23,6 +23,13 @@ static const CGFloat MGCMinBacgroundOpacity = 0.3;
 
 @implementation PhotoPage
 
+- (void)prepareForShow
+{
+    [self.scrollView setZoomScale:self.scrollView.minimumZoomScale animated:NO];
+}
+
+#pragma mark - Init
+
 - (instancetype)init
 {
     self = [super init];
@@ -62,8 +69,11 @@ static const CGFloat MGCMinBacgroundOpacity = 0.3;
 - (void)layoutSubviews
 {
     [self _layoutScrollView];
-    [self _layoutImageView];
-    [self _setZoomScales];
+    if (self.image)
+    {
+        [self _layoutImageView];
+        [self _setZoomScales];
+    }
 }
 
 - (void)_layoutScrollView
@@ -87,6 +97,7 @@ static const CGFloat MGCMinBacgroundOpacity = 0.3;
 {
     _image = image;
     self.imageView.image = image;
+    [self setNeedsLayout];
 }
 
 #pragma mark - <UIScrollViewDelegate>
