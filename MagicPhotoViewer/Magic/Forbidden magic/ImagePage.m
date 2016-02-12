@@ -2,7 +2,7 @@
 //  PhotoView.m
 //
 
-#import "PhotoPage.h"
+#import "ImagePage.h"
 #import <AVFoundation/AVFoundation.h>
 #define RootView [[UIApplication sharedApplication] keyWindow].rootViewController.view
 
@@ -10,7 +10,7 @@ static const NSInteger MGCOffsetForClose = 50;
 static const NSInteger MGCOffsetForProgress = 140;
 static const CGFloat MGCMinBacgroundOpacity = 0.3;
 
-@interface PhotoPage () <UIScrollViewDelegate>
+@interface ImagePage () <UIScrollViewDelegate>
 
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIImageView *imageView;
@@ -23,7 +23,7 @@ static const CGFloat MGCMinBacgroundOpacity = 0.3;
 
 @end
 
-@implementation PhotoPage
+@implementation ImagePage
 
 - (void)prepareForShow
 {

@@ -2,26 +2,26 @@
 //  PhotoContentView.m
 //
 
-#import "PhotoController.h"
-#import "PhotoPage.h"
+#import "ImageViewer.h"
+#import "ImagePage.h"
 
 #define RootView [[UIApplication sharedApplication] keyWindow].rootViewController.view
 
 static const NSInteger MGCPhotosOffset = 5;
 
-@interface PhotoController () <UIScrollViewDelegate, PhotoViewDelegate>
+@interface ImageViewer () <UIScrollViewDelegate, ImagePageDelegate>
 
 @property (nonatomic, strong) NSArray<UIImageView *> *photos;
 @property (nonatomic, assign) NSInteger currentPage;
 @property (nonatomic, strong) CodeBlock closeBlock;
 
 @property (nonatomic, strong) UIScrollView *scrollView;
-@property (nonatomic, strong) NSArray<PhotoPage *> *pages;
+@property (nonatomic, strong) NSArray<ImagePage *> *pages;
 @property (nonatomic, assign) BOOL isRotation;
 
 @end
 
-@implementation PhotoController
+@implementation ImageViewer
 
 - (void)viewDidLoad
 {
@@ -87,7 +87,7 @@ static const NSInteger MGCPhotosOffset = 5;
     __block CGRect rect = self.scrollView.bounds;
     NSInteger width = CGRectGetWidth(rect);
     rect.size.width -= MGCPhotosOffset * 2;
-    [self.pages enumerateObjectsUsingBlock:^(PhotoPage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [self.pages enumerateObjectsUsingBlock:^(ImagePage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         rect.origin.x = width * idx + MGCPhotosOffset;
         obj.frame = rect;
     }];
@@ -160,16 +160,17 @@ static const NSInteger MGCPhotosOffset = 5;
     self.isRotation = YES;
 }
 
-#pragma mark - <PhotoViewDelegate>
+#pragma mark - <ImagePageDelegate>
 
 - (void)closePhoto:(UIImageView *)photo;
 {
     [self _closeAnimationWith:photo completed:^{
-        [self.delegate closeController];
-        if (self.closeBlock)
-        {
-            self.closeBlock();
-        }
+        [self dismissViewControllerAnimated:NO completion:^{
+            if (self.closeBlock)
+            {
+                self.closeBlock();
+            }
+        }];
     }];
 }
 
@@ -267,7 +268,7 @@ static const NSInteger MGCPhotosOffset = 5;
     {
         return;
     }
-    PhotoPage *page = self.pages[index];
+    ImagePage *page = self.pages[index];
     if (!page.image)
     {
         UIImageView *imageView = self.photos[index];
@@ -285,11 +286,11 @@ static const NSInteger MGCPhotosOffset = 5;
     NSMutableArray *pages = [NSMutableArray new];
     for (NSInteger index = 0; index < self.photos.count; index++)
     {
-        PhotoPage *photoPage = [PhotoPage new];
-        photoPage.delegate = self;
-        photoPage.index = index;
-        [self.scrollView addSubview:photoPage];
-        [pages addObject:photoPage];
+        ImagePage *page = [ImagePage new];
+        page.delegate = self;
+        page.index = index;
+        [self.scrollView addSubview:page];
+        [pages addObject:page];
     }
     self.pages = pages;
 }

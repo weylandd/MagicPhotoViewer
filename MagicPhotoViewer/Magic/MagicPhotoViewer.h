@@ -4,11 +4,9 @@
 
 #import <UIKit/UIKit.h>
 
-#define PhotosViewer [PhotosHelper sharedInstance]
-
 typedef void(^CodeBlock)(void);
 
-@interface PhotosHelper : NSObject
+@interface MagicPhotoViewer : NSObject
 
 + (id)sharedInstance;
 

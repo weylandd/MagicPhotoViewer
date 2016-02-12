@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "View.h"
 
-#import "PhotosHelper.h"
+#import "MagicPhotoViewer.h"
 
 @interface ViewController () <CollectionCellDelegate, UICollectionViewDelegate, UICollectionViewDataSource>
 
@@ -32,7 +32,7 @@
 
 - (void)cellDidSelected:(CollectionCell *)cell
 {
-    [PhotosViewer openPhotos:[self _imageViewsWithSelectedCell:cell] currentIndex:self.currentIndex close:nil];
+    [[MagicPhotoViewer sharedInstance] openPhotos:[self _imageViewsWithSelectedCell:cell] currentIndex:self.currentIndex close:nil];
 }
 
 #pragma mark - <UICollectionViewDelegate>

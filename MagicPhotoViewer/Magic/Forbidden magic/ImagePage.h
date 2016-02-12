@@ -3,11 +3,11 @@
 //
 
 #import <UIKit/UIKit.h>
-@protocol PhotoViewDelegate;
+@protocol ImagePageDelegate;
 
-@interface PhotoPage : UIView
+@interface ImagePage : UIView
 
-@property (nonatomic, weak) id<PhotoViewDelegate> delegate;
+@property (nonatomic, weak) id<ImagePageDelegate> delegate;
 @property (nonatomic, strong) UIImage *image;
 @property (nonatomic, assign) NSInteger index;
 
@@ -15,7 +15,7 @@
 
 @end
 
-@protocol PhotoViewDelegate
+@protocol ImagePageDelegate
 
 - (void)changeBackgroundAlpha:(CGFloat)alpha;
 

@@ -2,22 +2,23 @@
 //  PhotosHelper.m
 //
 
-#import "PhotosHelper.h"
-#import "PhotoController.h"
+#import "MagicPhotoViewer.h"
+#import "ImageViewer.h"
 
 #define RootViewController [[UIApplication sharedApplication] keyWindow].rootViewController
 
-@interface PhotosHelper () <PhotoControllerDelegate>
+@interface MagicPhotoViewer () <ImageViewerDelegate, ImageViewerDataSource>
 
-@property (nonatomic, strong) PhotoController *photoController;
+@property (nonatomic, strong) ImageViewer *photoController;
+@property (nonatomic, strong) NSArray *photos;
 
 @end
 
-@implementation PhotosHelper
+@implementation MagicPhotoViewer
 
 + (id)sharedInstance
 {
-    static PhotosHelper *sharedInstance = nil;
+    static MagicPhotoViewer *sharedInstance = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^ {
         sharedInstance = [self new];
@@ -27,7 +28,7 @@
 
 - (void)openPhotos:(NSArray<UIImageView *> *)photos currentIndex:(NSInteger)index close:(CodeBlock)close
 {
-    self.photoController = [PhotoController new];
+    self.photoController = [ImageViewer new];
     self.photoController.delegate = self;
     [self.photoController setModalPresentationStyle:UIModalPresentationOverCurrentContext];
     [self.photoController setupInitialState];
@@ -36,11 +37,11 @@
     }];
 }
 
-#pragma mark - <PhotoControllerDelegate>
+#pragma mark - <PhotoControllerDataSource>
 
-- (void)closeController
-{
-    [self.photoController dismissViewControllerAnimated:NO completion:nil];
-}
+//- (UIImage *)imageForIndex:(NSInteger)index
+//{
+//    
+//}
 
 @end
