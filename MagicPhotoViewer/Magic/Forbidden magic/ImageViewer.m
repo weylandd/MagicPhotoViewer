@@ -8,6 +8,7 @@
 #define RootView [[UIApplication sharedApplication] keyWindow].rootViewController.view
 
 static const NSInteger MGCPhotosOffset = 5;
+static const CGFloat MGCAnimationTime = 0.2;
 
 @interface ImageViewer () <UIScrollViewDelegate, ImagePageDelegate>
 
@@ -134,44 +135,9 @@ static const NSInteger MGCPhotosOffset = 5;
     CGRect rect = self.scrollView.bounds;
     CGFloat originX = scrollView.contentOffset.x;
     CGFloat page = originX / CGRectGetWidth(rect);
-    NSInteger currentPage = roundf(page);
-    NSInteger nextPage = self.nextPage;
-    NSInteger lastPage = self.lastPage;
-    
-    if (page < currentPage)
-    {
-        lastPage = floorf(page);
-    }
-    else if (page > currentPage)
-    {
-        nextPage = ceilf(page);
-    }
-    else
-    {
-        nextPage = currentPage + 1;
-        lastPage = currentPage - 1;
-    }
-    
-    if (currentPage != self.currentPage)
-    {
-        self.currentPage = currentPage;
-    }
-    if (nextPage != self.nextPage)
-    {
-        self.nextPage = nextPage;
-        if (self.lastPage == nextPage - 2)
-        {
-            [self _prepareTwoPages];
-        }
-    }
-    if (lastPage != self.lastPage)
-    {
-        self.lastPage = lastPage;
-        if (self.nextPage == lastPage + 2)
-        {
-            [self _prepareTwoPages];
-        }
-    }
+    [self _calculateCurrentPage:page];
+    [self _calculateNextPage:page];
+    [self _calculateLastPage:page];
 }
 
 #pragma mark - Orientation
@@ -214,22 +180,16 @@ static const NSInteger MGCPhotosOffset = 5;
     {
         [self _dismiss];
     }
-    CGRect rect = [image convertRect:image.frame toView:nil];
-    
-    UIImageView *imageView = [[UIImageView alloc] initWithFrame:rect];
-    imageView.image = image.image;
-    imageView.contentMode = UIViewContentModeScaleAspectFill;
-    imageView.clipsToBounds = YES;
-    [RootView addSubview:imageView];
+    UIImageView *imageView = [self _copyImageView:image];
     
     CGRect newRect;
     newRect.size = [self _sizeForImage:imageView.image];
     newRect.origin = [self _originForSize:newRect.size];
     
-    [UIView animateWithDuration:0.2 animations:^{
+    [UIView animateWithDuration:MGCAnimationTime animations:^{
         imageView.frame = newRect;
     } completion:^(BOOL finished) {
-        [UIView animateWithDuration:0.2 animations:^{
+        [UIView animateWithDuration:MGCAnimationTime animations:^{
             self.view.alpha = 1;
         } completion:^(BOOL finished) {
             [imageView removeFromSuperview];
@@ -242,7 +202,7 @@ static const NSInteger MGCPhotosOffset = 5;
 {
     UIImageView *image = [self.dataSource imageViewer:self imageViewForIndex:self.currentPage];
     CGRect rect = [image convertRect:image.frame toView:nil];
-    [UIView animateWithDuration:0.2 animations:^{
+    [UIView animateWithDuration:MGCAnimationTime animations:^{
         photo.frame = rect;
         self.view.alpha = 0;
     } completion:^(BOOL finished) {
@@ -274,6 +234,62 @@ static const NSInteger MGCPhotosOffset = 5;
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleLightContent;
+}
+
+#pragma mark - Calculations
+
+- (void)_calculateCurrentPage:(CGFloat)page
+{
+    NSInteger currentPage = roundf(page);
+    if (currentPage != self.currentPage)
+    {
+        self.currentPage = currentPage;
+    }
+}
+
+- (void)_calculateNextPage:(CGFloat)page
+{
+    NSInteger nextPage = self.nextPage;
+    
+    if (page > self.currentPage)
+    {
+        nextPage = ceilf(page);
+    }
+    else if (page == self.currentPage)
+    {
+        nextPage = self.currentPage + 1;
+    }
+    
+    if (nextPage != self.nextPage)
+    {
+        self.nextPage = nextPage;
+        if (self.lastPage == nextPage - 2)
+        {
+            [self _prepareTwoPages];
+        }
+    }
+}
+
+- (void)_calculateLastPage:(CGFloat)page
+{
+    NSInteger lastPage = self.lastPage;
+    if (page < self.currentPage)
+    {
+        lastPage = floorf(page);
+    }
+    else if (page == self.currentPage)
+    {
+        lastPage = self.currentPage - 1;
+    }
+    
+    if (lastPage != self.lastPage)
+    {
+        self.lastPage = lastPage;
+        if (self.nextPage == lastPage + 2)
+        {
+            [self _prepareTwoPages];
+        }
+    }
 }
 
 #pragma mark - Private methods
@@ -339,6 +355,17 @@ static const NSInteger MGCPhotosOffset = 5;
     origin.x = CGRectGetMidX(rect) - size.width / 2;
     origin.y = CGRectGetMidY(rect) - size.height / 2;
     return origin;
+}
+
+- (UIImageView *)_copyImageView:(UIImageView *)image
+{
+    CGRect rect = [image convertRect:image.frame toView:nil];
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:rect];
+    imageView.image = image.image;
+    imageView.contentMode = UIViewContentModeScaleAspectFill;
+    imageView.clipsToBounds = YES;
+    [RootView addSubview:imageView];
+    return imageView;
 }
 
 #pragma mark - Lazy initialization
