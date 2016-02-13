@@ -304,9 +304,15 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
 
 - (void)viewWillLayoutSubviews
 {
+    [self _layoutContentView];
     [self _layoutScrollView];
     [self _layoutPages];
-    [self _layoutContentView];
+}
+
+- (void)_layoutContentView
+{
+    CGRect rect = self.view.bounds;
+    self.contentView.frame = rect;
 }
 
 - (void)_layoutScrollView
@@ -334,13 +340,17 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
     self.isRotation = NO;
 }
 
-- (void)_layoutContentView
-{
-    CGRect rect = self.view.bounds;
-    self.contentView.frame = rect;
-}
-
 #pragma mark - Lazy initialization
+
+- (UIView *)contentView
+{
+    if (!_contentView)
+    {
+        _contentView = [UIView new];
+        [self.view addSubview:_contentView];
+    }
+    return _contentView;
+}
 
 - (UIScrollView *)scrollView
 {
@@ -354,16 +364,6 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
         [self.contentView addSubview:_scrollView];
     }
     return _scrollView;
-}
-
-- (UIView *)contentView
-{
-    if (!_contentView)
-    {
-        _contentView = [UIView new];
-        [self.view addSubview:_contentView];
-    }
-    return _contentView;
 }
 
 @end

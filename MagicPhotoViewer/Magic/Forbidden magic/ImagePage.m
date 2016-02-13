@@ -175,46 +175,6 @@ static const NSInteger MGCDistanceForClose = 50;
 
 #pragma mark - <UIScrollViewDelegate>
 
-//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
-//{
-//    self.isAnimated = YES;
-//    self.isCanClose = ;
-//}
-//
-//- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
-//{
-//    if (scrollView.panGestureRecognizer.numberOfTouches > 1 || !self.isCanClose)
-//    {
-//        return;
-//    }
-//    CGFloat offset = ABS(scrollView.contentOffset.y);
-//    if (offset > MGCOffsetForClose)
-//    {
-//        [self _closeAnimation];
-//    }
-//}
-
-//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
-//{
-//    self.isAnimated = NO;
-//    [self.delegate changeBackgroundAlpha:1];
-//}
-//
-//- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-//{
-//    if (scrollView.panGestureRecognizer.numberOfTouches > 1 || !self.isCanClose)
-//    {
-//        return;
-//    }
-//    CGFloat offset = ABS(scrollView.contentOffset.y);
-//    CGFloat progress = offset / MGCOffsetForProgress;
-//    progress = MIN(progress, 1);
-//    
-//    CGFloat alpha = 1 - progress;
-//    alpha += progress * MGCMinBacgroundOpacity;
-//    [self.delegate changeBackgroundAlpha:alpha];
-//}
-
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
     [self _centerImageView];
@@ -236,13 +196,6 @@ static const NSInteger MGCDistanceForClose = 50;
 }
 
 #pragma mark - Private
-
-//- (CGFloat)_distanceBetweenPoints:(CGPoint)point1 :(CGPoint)point2
-//{
-//    CGFloat deltaX = point1.x - point2.x;
-//    CGFloat deltaY = point1.y - point2.y;
-//    return sqrtf(pow(deltaX, 2) + pow(deltaY, 2));
-//}
 
 - (void)_closeFailedAnimation
 {
@@ -301,12 +254,12 @@ static const NSInteger MGCDistanceForClose = 50;
     rect.origin.y -= self.scrollView.contentOffset.y;
     
     UIImageView *imageView = [UIImageView new];
-    [self.containerView addSubview:imageView];
-    [self.containerView bringSubviewToFront:imageView];
     imageView.frame = rect;
     imageView.image = self.image;
     imageView.contentMode = UIViewContentModeScaleAspectFill;
     imageView.clipsToBounds = YES;
+    [self.containerView addSubview:imageView];
+    [self.containerView bringSubviewToFront:imageView];
     
     self.imageView.hidden = YES;
     return imageView;
@@ -367,7 +320,6 @@ static const NSInteger MGCDistanceForClose = 50;
     {
         return;
     }
-    
     CGSize size = self.bounds.size;
     CGSize imageSize = self.image.size;
     
