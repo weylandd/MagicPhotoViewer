@@ -8,12 +8,42 @@
 
 #import "CustomImageViewer.h"
 
+@interface CustomImageViewer ()
+
+@end
+
 @implementation CustomImageViewer
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self setNeedsStatusBarAppearanceUpdate];
+}
 
 - (void)setupInitialState
 {
     [super setupInitialState];
 }
+
+#pragma mark - Actions
+
+//- (void)leftButtonDidPressed
+//{
+//    [self _closeAnimationCompleted:^{
+//        [self.delegate closeController];
+//        if (self.closeBlock)
+//        {
+//            self.closeBlock();
+//        }
+//    }];
+//}
+
+//- (void)actionButtonTapped
+//{
+//    UIImageView *image = self.photos[self.currentPage];
+//    UIActivityViewController *activityController = [[UIActivityViewController alloc] initWithActivityItems:@[image.image] applicationActivities:nil];
+//    [self presentViewController:activityController animated:YES completion:nil];
+//}
 
 #pragma mark - Setters
 
@@ -28,5 +58,28 @@
     _customDataSource = customDataSource;
     self.dataSource = customDataSource;
 }
+
+#pragma mark - Status bar
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
+#pragma mark - Animations
+
+//- (void)_closeAnimationCompleted:(void(^)())completed
+//{
+//    UIImageView *image = self.photos[self.currentPage];
+//    image.hidden = NO;
+//    [UIView animateWithDuration:0.2 animations:^{
+//        self.view.alpha = 0;
+//    } completion:^(BOOL finished) {
+//        if (completed)
+//        {
+//            completed();
+//        }
+//    }];
+//}
 
 @end

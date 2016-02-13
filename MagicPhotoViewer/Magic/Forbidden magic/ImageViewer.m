@@ -26,7 +26,6 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setNeedsStatusBarAppearanceUpdate];
 }
 
 - (void)setupInitialState
@@ -58,26 +57,6 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
     lastImageView.hidden = NO;
     newImageView.hidden = YES;
 }
-
-#pragma mark - Actions
-
-//- (void)leftButtonDidPressed
-//{
-//    [self _closeAnimationCompleted:^{
-//        [self.delegate closeController];
-//        if (self.closeBlock)
-//        {
-//            self.closeBlock();
-//        }
-//    }];
-//}
-
-//- (void)actionButtonTapped
-//{
-//    UIImageView *image = self.photos[self.currentPage];
-//    UIActivityViewController *activityController = [[UIActivityViewController alloc] initWithActivityItems:@[image.image] applicationActivities:nil];
-//    [self presentViewController:activityController animated:YES completion:nil];
-//}
 
 #pragma mark - Scroll
 
@@ -185,27 +164,6 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
             completed();
         }
     }];
-}
-
-//- (void)_closeAnimationCompleted:(void(^)())completed
-//{
-//    UIImageView *image = self.photos[self.currentPage];
-//    image.hidden = NO;
-//    [UIView animateWithDuration:0.2 animations:^{
-//        self.view.alpha = 0;
-//    } completion:^(BOOL finished) {
-//        if (completed)
-//        {
-//            completed();
-//        }
-//    }];
-//}
-
-#pragma mark - Status bar
-
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
 }
 
 #pragma mark - Calculations
