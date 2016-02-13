@@ -44,7 +44,7 @@ static const NSInteger MGCDistanceForClose = 50;
     [self.imageView addGestureRecognizer:doubleTap];
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGesture:)];
     pan.delegate = self;
-    [self.imageView addGestureRecognizer:pan];
+    [self.scrollView addGestureRecognizer:pan];
 }
 
 #pragma mark - Actions
@@ -220,6 +220,10 @@ static const NSInteger MGCDistanceForClose = 50;
     rect.origin.y += cropHeight / 2;
     rect.size.width -= cropWidth;
     rect.size.height -= cropHeight;
+    
+    rect.origin.x -= self.scrollView.contentOffset.x;
+    rect.origin.y -= self.scrollView.contentOffset.y;
+    
     rect.origin.x -= displacement.x;
     rect.origin.y -= displacement.y;
     self.imageViewCopy.frame = rect;
