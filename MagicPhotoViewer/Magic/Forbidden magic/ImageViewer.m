@@ -5,10 +5,8 @@
 #import "ImageViewer.h"
 #import "ImagePage.h"
 
-#define RootView [[UIApplication sharedApplication] keyWindow].rootViewController.view
-
 static const NSInteger MGCPhotosOffset = 5;
-static const CGFloat MGCAnimationTime = 0.2;
+static const CGFloat MGCOpenAnimationTime = 0.3;
 
 @interface ImageViewer () <UIScrollViewDelegate, ImagePageDelegate>
 
@@ -33,9 +31,9 @@ static const CGFloat MGCAnimationTime = 0.2;
 
 - (void)setupInitialState
 {
-    self.view.alpha = 0;
-    self.view.backgroundColor = [UIColor blackColor];
-    self.view.userInteractionEnabled = NO;
+    self.contentView.alpha = 0;
+    self.contentView.backgroundColor = [UIColor blackColor];
+    self.contentView.userInteractionEnabled = NO;
 }
 
 - (void)openPhotos:(NSArray<UIImageView *> *)photos currentIndex:(NSInteger)index close:(CodeBlock)close
@@ -59,39 +57,6 @@ static const CGFloat MGCAnimationTime = 0.2;
     
     lastImageView.hidden = NO;
     newImageView.hidden = YES;
-}
-
-#pragma mark - > Layout <
-
-- (void)viewWillLayoutSubviews
-{
-    [self _layoutScrollView];
-    [self _layoutPages];
-}
-
-- (void)_layoutScrollView
-{
-    CGRect rect = self.view.bounds;
-    rect.origin.x -= MGCPhotosOffset;
-    rect.size.width += MGCPhotosOffset * 2;
-    self.scrollView.frame = rect;
-}
-
-- (void)_layoutPages
-{
-    __block CGRect rect = self.scrollView.bounds;
-    NSInteger width = CGRectGetWidth(rect);
-    rect.size.width -= MGCPhotosOffset * 2;
-    [self.pages enumerateObjectsUsingBlock:^(ImagePage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        rect.origin.x = width * idx + MGCPhotosOffset;
-        obj.frame = rect;
-    }];
-    
-    CGSize size = self.scrollView.bounds.size;
-    size.width = self.pages.count * width;
-    self.scrollView.contentSize = size;
-    [self _scrollToIndex:self.currentPage animated:NO];
-    self.isRotation = NO;
 }
 
 #pragma mark - Actions
@@ -149,16 +114,24 @@ static const CGFloat MGCAnimationTime = 0.2;
 
 #pragma mark - <ImagePageDelegate>
 
-- (void)closePhoto:(UIImageView *)photo;
+- (void)closeWithImage:(UIImageView *)image
 {
-    [self _closeAnimationWith:photo completed:^{
+    [self _closeAnimationWith:image completed:^{
         [self _dismiss];
     }];
 }
 
-- (void)changeBackgroundAlpha:(CGFloat)alpha
+- (void)closeActionWithProgress:(CGFloat)progress
 {
-    self.view.backgroundColor = [UIColor colorWithWhite:0 alpha:alpha];
+    CGFloat alpha = 1 - progress;
+    self.contentView.alpha = alpha;
+}
+
+- (void)closeFailedAction
+{
+    [UIView animateWithDuration:MGCCloseAnimationDuration animations:^{
+        self.contentView.alpha = 1;
+    }];
 }
 
 #pragma mark - Animations
@@ -180,21 +153,20 @@ static const CGFloat MGCAnimationTime = 0.2;
     {
         [self _dismiss];
     }
+    self.scrollView.hidden = YES;
     UIImageView *imageView = [self _copyImageView:image];
     
     CGRect newRect;
     newRect.size = [self _sizeForImage:imageView.image];
     newRect.origin = [self _originForSize:newRect.size];
     
-    [UIView animateWithDuration:MGCAnimationTime animations:^{
+    [UIView animateWithDuration:MGCOpenAnimationTime animations:^{
         imageView.frame = newRect;
+        self.contentView.alpha = 1;
     } completion:^(BOOL finished) {
-        [UIView animateWithDuration:MGCAnimationTime animations:^{
-            self.view.alpha = 1;
-        } completion:^(BOOL finished) {
-            [imageView removeFromSuperview];
-            self.view.userInteractionEnabled = YES;
-        }];
+        [imageView removeFromSuperview];
+        self.contentView.userInteractionEnabled = YES;
+        self.scrollView.hidden = NO;
     }];
 }
 
@@ -202,9 +174,9 @@ static const CGFloat MGCAnimationTime = 0.2;
 {
     UIImageView *image = [self.dataSource imageViewer:self imageViewForIndex:self.currentPage];
     CGRect rect = [image convertRect:image.frame toView:nil];
-    [UIView animateWithDuration:MGCAnimationTime animations:^{
+    [UIView animateWithDuration:MGCCloseAnimationDuration animations:^{
         photo.frame = rect;
-        self.view.alpha = 0;
+        self.contentView.alpha = 0;
     } completion:^(BOOL finished) {
         [photo removeFromSuperview];
         image.hidden = NO;
@@ -310,7 +282,7 @@ static const CGFloat MGCAnimationTime = 0.2;
     ImagePage *page = self.pages[index];
     if (!page.image)
     {
-        page.image = [self.dataSource imageViewer:self imageForIndex:index];
+        page.image = [self.dataSource imageViewer:self imageViewForIndex:index].image;
     }
     [page prepareForShow];
 }
@@ -322,6 +294,7 @@ static const CGFloat MGCAnimationTime = 0.2;
     for (NSInteger index = 0; index < count; index++)
     {
         ImagePage *page = [ImagePage new];
+        page.containerView = self.view;
         page.delegate = self;
         page.index = index;
         [self.scrollView addSubview:page];
@@ -364,8 +337,49 @@ static const CGFloat MGCAnimationTime = 0.2;
     imageView.image = image.image;
     imageView.contentMode = UIViewContentModeScaleAspectFill;
     imageView.clipsToBounds = YES;
-    [RootView addSubview:imageView];
+    [self.view addSubview:imageView];
+    [self.view bringSubviewToFront:imageView];
     return imageView;
+}
+
+#pragma mark - > Layout <
+
+- (void)viewWillLayoutSubviews
+{
+    [self _layoutScrollView];
+    [self _layoutPages];
+    [self _layoutContentView];
+}
+
+- (void)_layoutScrollView
+{
+    CGRect rect = self.view.bounds;
+    rect.origin.x -= MGCPhotosOffset;
+    rect.size.width += MGCPhotosOffset * 2;
+    self.scrollView.frame = rect;
+}
+
+- (void)_layoutPages
+{
+    __block CGRect rect = self.scrollView.bounds;
+    NSInteger width = CGRectGetWidth(rect);
+    rect.size.width -= MGCPhotosOffset * 2;
+    [self.pages enumerateObjectsUsingBlock:^(ImagePage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        rect.origin.x = width * idx + MGCPhotosOffset;
+        obj.frame = rect;
+    }];
+    
+    CGSize size = self.scrollView.bounds.size;
+    size.width = self.pages.count * width;
+    self.scrollView.contentSize = size;
+    [self _scrollToIndex:self.currentPage animated:NO];
+    self.isRotation = NO;
+}
+
+- (void)_layoutContentView
+{
+    CGRect rect = self.view.bounds;
+    self.contentView.frame = rect;
 }
 
 #pragma mark - Lazy initialization
@@ -379,9 +393,19 @@ static const CGFloat MGCAnimationTime = 0.2;
         _scrollView.pagingEnabled = YES;
         _scrollView.showsHorizontalScrollIndicator = NO;
         _scrollView.delegate = self;
-        [self.view addSubview:_scrollView];
+        [self.contentView addSubview:_scrollView];
     }
     return _scrollView;
+}
+
+- (UIView *)contentView
+{
+    if (!_contentView)
+    {
+        _contentView = [UIView new];
+        [self.view addSubview:_contentView];
+    }
+    return _contentView;
 }
 
 @end

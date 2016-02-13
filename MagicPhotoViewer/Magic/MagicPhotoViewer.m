@@ -39,12 +39,6 @@
 
 #pragma mark - <PhotoControllerDataSource>
 
-- (UIImage *)imageViewer:(ImageViewer *)imageViewer imageForIndex:(NSInteger)index
-{
-    UIImageView *imageView = self.photos[index];
-    return imageView.image;
-}
-
 - (UIImageView *)imageViewer:(ImageViewer *)imageViewer imageViewForIndex:(NSInteger)index
 {
     UIImageView *imageView = self.photos[index];

@@ -11,6 +11,8 @@
 @property (nonatomic, weak) id <ImageViewerDelegate> delegate;
 @property (nonatomic, weak) id <ImageViewerDataSource> dataSource;
 
+@property (nonatomic, strong) UIView *contentView;
+
 - (void)setupInitialState;
 
 - (void)openPhotos:(NSArray<UIImageView *> *)photos currentIndex:(NSInteger)index close:(CodeBlock)close;
@@ -22,8 +24,6 @@
 @end
 
 @protocol ImageViewerDataSource <NSObject>
-
-- (UIImage *)imageViewer:(ImageViewer *)imageViewer imageForIndex:(NSInteger)index;
 
 - (UIImageView *)imageViewer:(ImageViewer *)imageViewer imageViewForIndex:(NSInteger)index;
 

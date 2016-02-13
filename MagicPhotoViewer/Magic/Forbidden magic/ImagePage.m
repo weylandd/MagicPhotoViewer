@@ -3,23 +3,18 @@
 //
 
 #import "ImagePage.h"
-#import <AVFoundation/AVFoundation.h>
-#define RootView [[UIApplication sharedApplication] keyWindow].rootViewController.view
 
-static const NSInteger MGCOffsetForClose = 50;
-static const NSInteger MGCOffsetForProgress = 140;
-static const CGFloat MGCMinBacgroundOpacity = 0.3;
+static const NSInteger MGCDistanceForClose = 50;
 
-@interface ImagePage () <UIScrollViewDelegate>
+@interface ImagePage () <UIScrollViewDelegate, UIGestureRecognizerDelegate>
 
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIImageView *imageView;
+@property (nonatomic, strong) UIImageView *imageViewCopy;
 
-@property (nonatomic, assign) CGFloat previousScale;
-@property (nonatomic, assign) CGPoint lastPoint;
-@property (nonatomic, assign) CGFloat currentScale;
 @property (nonatomic, assign) BOOL isZooming;
-@property (nonatomic, assign) BOOL isAnimated;
+@property (nonatomic, assign) BOOL isCanClose;
+@property (nonatomic, assign) CGPoint touchStartPoint;
 
 @end
 
@@ -47,13 +42,16 @@ static const CGFloat MGCMinBacgroundOpacity = 0.3;
     UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
     doubleTap.numberOfTapsRequired = 2;
     [self.imageView addGestureRecognizer:doubleTap];
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGesture:)];
+    pan.delegate = self;
+    [self.imageView addGestureRecognizer:pan];
 }
 
 #pragma mark - Actions
 
 - (void)handleDoubleTap:(UIGestureRecognizer *)gestureRecognizer
 {
-    if (!self.image || self.isZooming || self.isAnimated)
+    if (!self.image || self.isZooming)
     {
         return;
     }
@@ -64,6 +62,79 @@ static const CGFloat MGCMinBacgroundOpacity = 0.3;
     }
     CGPoint touchPoint = [gestureRecognizer locationInView:gestureRecognizer.view];
     [self _scrollToTouchPoint:touchPoint];
+}
+
+- (void)panGesture:(UIPanGestureRecognizer *)panGestureRecognizer
+{
+    switch (panGestureRecognizer.state) {
+        case UIGestureRecognizerStateBegan:
+        {
+            self.userInteractionEnabled = NO;
+            self.touchStartPoint = [panGestureRecognizer locationInView:self];
+            self.imageViewCopy = [self _copyImageView];
+        }
+        case UIGestureRecognizerStateChanged:
+        {
+            [self _panGestureProgress:panGestureRecognizer];
+            break;
+        }
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateEnded:
+        {
+            [self _panGestureEnded:panGestureRecognizer];
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    return [self _gestureRecognizerShouldBegin:gestureRecognizer];
+}
+
+#pragma mark - Gestures
+
+- (BOOL)_gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]])
+    {
+        UIPanGestureRecognizer *gesture = (UIPanGestureRecognizer *)gestureRecognizer;
+        CGFloat velocityX = [gesture velocityInView:self].x;
+        CGFloat velocityY = [gesture velocityInView:self].y;
+        if (ABS(velocityX) < ABS(velocityY) * 2 && [self _isCanClose])
+        {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (void)_panGestureProgress:(UIPanGestureRecognizer *)panGestureRecognizer
+{
+    CGPoint touch = [panGestureRecognizer locationInView:self];
+    CGFloat distance = ABS(touch.y - self.touchStartPoint.y);
+    CGFloat progress = MIN(1, distance / MGCDistanceForClose / 4);
+    [self.delegate closeActionWithProgress:progress];
+    
+    CGPoint displacement = [self _displacementPoints:self.touchStartPoint :touch];
+    [self _moveImageViewCopyWithDisplacement:displacement progress:progress];
+}
+
+- (void)_panGestureEnded:(UIPanGestureRecognizer *)panGestureRecognizer
+{
+    CGPoint touch = [panGestureRecognizer locationInView:self];
+    CGFloat distance = ABS(touch.y - self.touchStartPoint.y);
+    if (distance > MGCDistanceForClose)
+    {
+        [self.delegate closeWithImage:self.imageViewCopy];
+    }
+    else
+    {
+        [self.delegate closeFailedAction];
+        [self _closeFailedAnimation];
+    }
 }
 
 #pragma mark - > Layout <
@@ -104,43 +175,45 @@ static const CGFloat MGCMinBacgroundOpacity = 0.3;
 
 #pragma mark - <UIScrollViewDelegate>
 
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
-{
-    self.isAnimated = YES;
-}
+//- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+//{
+//    self.isAnimated = YES;
+//    self.isCanClose = ;
+//}
+//
+//- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
+//{
+//    if (scrollView.panGestureRecognizer.numberOfTouches > 1 || !self.isCanClose)
+//    {
+//        return;
+//    }
+//    CGFloat offset = ABS(scrollView.contentOffset.y);
+//    if (offset > MGCOffsetForClose)
+//    {
+//        [self _closeAnimation];
+//    }
+//}
 
-- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
-{
-    if ([self _isScrollScale])
-    {
-        return;
-    }
-    CGFloat offset = ABS(scrollView.contentOffset.y);
-    if (offset > MGCOffsetForClose)
-    {
-        [self _closeAnimation];
-    }
-}
-
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
-{
-    self.isAnimated = NO;
-}
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-    if ([self _isScrollScale])
-    {
-        return;
-    }
-    CGFloat offset = ABS(scrollView.contentOffset.y);
-    CGFloat progress = offset / MGCOffsetForProgress;
-    progress = MIN(progress, 1);
-    
-    CGFloat alpha = 1 - progress;
-    alpha += progress * MGCMinBacgroundOpacity;
-    [self.delegate changeBackgroundAlpha:alpha];
-}
+//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+//{
+//    self.isAnimated = NO;
+//    [self.delegate changeBackgroundAlpha:1];
+//}
+//
+//- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+//{
+//    if (scrollView.panGestureRecognizer.numberOfTouches > 1 || !self.isCanClose)
+//    {
+//        return;
+//    }
+//    CGFloat offset = ABS(scrollView.contentOffset.y);
+//    CGFloat progress = offset / MGCOffsetForProgress;
+//    progress = MIN(progress, 1);
+//    
+//    CGFloat alpha = 1 - progress;
+//    alpha += progress * MGCMinBacgroundOpacity;
+//    [self.delegate changeBackgroundAlpha:alpha];
+//}
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
@@ -164,6 +237,48 @@ static const CGFloat MGCMinBacgroundOpacity = 0.3;
 
 #pragma mark - Private
 
+//- (CGFloat)_distanceBetweenPoints:(CGPoint)point1 :(CGPoint)point2
+//{
+//    CGFloat deltaX = point1.x - point2.x;
+//    CGFloat deltaY = point1.y - point2.y;
+//    return sqrtf(pow(deltaX, 2) + pow(deltaY, 2));
+//}
+
+- (void)_closeFailedAnimation
+{
+    [UIView animateWithDuration:MGCCloseAnimationDuration animations:^{
+        self.imageViewCopy.frame = self.imageView.frame;
+    } completion:^(BOOL finished) {
+        self.imageView.hidden = NO;
+        [self.imageViewCopy removeFromSuperview];
+        self.imageViewCopy = nil;
+        self.userInteractionEnabled = YES;
+    }];
+}
+
+- (void)_moveImageViewCopyWithDisplacement:(CGPoint)displacement progress:(CGFloat)progress
+{
+    CGFloat scale = 1 - progress / 5;
+    CGRect rect = self.imageView.frame;
+    CGFloat cropWidth = CGRectGetWidth(rect) * (1 - scale);
+    CGFloat cropHeight = CGRectGetHeight(rect) * (1 - scale);
+    
+    rect.origin.x += cropWidth / 2;
+    rect.origin.y += cropHeight / 2;
+    rect.size.width -= cropWidth;
+    rect.size.height -= cropHeight;
+    rect.origin.x -= displacement.x;
+    rect.origin.y -= displacement.y;
+    self.imageViewCopy.frame = rect;
+}
+
+- (CGPoint)_displacementPoints:(CGPoint)point1 :(CGPoint)point2
+{
+    CGFloat deltaX = point1.x - point2.x;
+    CGFloat deltaY = point1.y - point2.y;
+    return CGPointMake(deltaX, deltaY);
+}
+
 - (void)_scrollToTouchPoint:(CGPoint)touchPoint
 {
     CGRect zoomRect;
@@ -180,22 +295,31 @@ static const CGFloat MGCMinBacgroundOpacity = 0.3;
     [self.scrollView zoomToRect:zoomRect animated:YES];
 }
 
-- (void)_closeAnimation
+- (UIImageView *)_copyImageView
 {
     CGRect rect = self.imageView.frame;
     rect.origin.y -= self.scrollView.contentOffset.y;
-    [self.imageView removeFromSuperview];
-    [RootView addSubview:self.imageView];
-    [RootView bringSubviewToFront:self.imageView];
-    self.imageView.frame = rect;
-    self.hidden = YES;
-    [self.delegate closePhoto:self.imageView];
-    self.delegate = nil;
+    
+    UIImageView *imageView = [UIImageView new];
+    [self.containerView addSubview:imageView];
+    [self.containerView bringSubviewToFront:imageView];
+    imageView.frame = rect;
+    imageView.image = self.image;
+    imageView.contentMode = UIViewContentModeScaleAspectFill;
+    imageView.clipsToBounds = YES;
+    
+    self.imageView.hidden = YES;
+    return imageView;
 }
 
 - (BOOL)_isScrollScale
 {
     return self.scrollView.zoomScale != self.scrollView.minimumZoomScale;
+}
+
+- (BOOL)_isCanClose
+{
+    return self.scrollView.contentOffset.y == 0;
 }
 
 - (CGSize)_sizeForImage:(UIImage *)image
