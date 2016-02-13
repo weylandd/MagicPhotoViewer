@@ -323,16 +323,11 @@ static const NSInteger MGCDistanceForClose = 50;
     CGSize size = self.bounds.size;
     CGSize imageSize = self.image.size;
     
-    CGFloat widthScale = size.width / imageSize.width;
-    CGFloat heightScale = size.height / imageSize.height;
-    CGFloat minScale = MIN(widthScale, heightScale);
-    if (widthScale >= 1 && heightScale >= 1)
-    {
-        minScale = 1;
-    }
+    CGFloat widthScale = imageSize.width / size.width;
+    CGFloat heightScale = imageSize.height / size.height;
+    CGFloat maxScale = MAX(2, MIN(widthScale, heightScale));
     
-    self.scrollView.minimumZoomScale = minScale;
-    self.scrollView.zoomScale = minScale;
+    self.scrollView.maximumZoomScale = maxScale;
 }
 
 -(void)_centerImageView

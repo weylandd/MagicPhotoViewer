@@ -133,6 +133,7 @@
         [_navigationBar setBackgroundImage:[UIImage imageNamed:@"background"] forBarMetrics:UIBarMetricsDefault];
         _navigationBar.shadowImage = [UIImage new];
         _navigationBar.translucent = YES;
+        _navigationBar.hidden = YES;
         
         UINavigationItem *navItem = [UINavigationItem new];
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
