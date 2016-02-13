@@ -12,6 +12,8 @@
 @property (nonatomic, weak) id <ImageViewerDataSource> dataSource;
 
 @property (nonatomic, strong) UIView *contentView;
+@property (nonatomic, assign) NSInteger currentPage;
+@property (nonatomic, strong) CodeBlock closeBlock;
 
 - (void)setupInitialState;
 

@@ -10,10 +10,8 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
 
 @interface ImageViewer () <UIScrollViewDelegate, ImagePageDelegate>
 
-@property (nonatomic, assign) NSInteger currentPage;
 @property (nonatomic, assign) NSInteger nextPage;
 @property (nonatomic, assign) NSInteger lastPage;
-@property (nonatomic, strong) CodeBlock closeBlock;
 
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) NSArray<ImagePage *> *pages;
