@@ -3,13 +3,13 @@
 //
 
 #import <UIKit/UIKit.h>
-@protocol ImagePageDelegate;
+@protocol MGCImagePageDelegate;
 
 static const CGFloat MGCCloseAnimationDuration = 0.3;
 
-@interface ImagePage : UIView
+@interface MGCImagePage : UIView
 
-@property (nonatomic, weak) id<ImagePageDelegate> delegate;
+@property (nonatomic, weak) id<MGCImagePageDelegate> delegate;
 @property (nonatomic, strong) UIView *containerView;
 @property (nonatomic, strong) UIImage *image;
 @property (nonatomic, assign) NSInteger index;
@@ -18,7 +18,7 @@ static const CGFloat MGCCloseAnimationDuration = 0.3;
 
 @end
 
-@protocol ImagePageDelegate
+@protocol MGCImagePageDelegate
 
 - (void)closeActionWithProgress:(CGFloat)progress;
 

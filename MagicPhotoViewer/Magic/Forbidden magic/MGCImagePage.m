@@ -2,11 +2,11 @@
 //  PhotoView.m
 //
 
-#import "ImagePage.h"
+#import "MGCImagePage.h"
 
 static const NSInteger MGCDistanceForClose = 50;
 
-@interface ImagePage () <UIScrollViewDelegate, UIGestureRecognizerDelegate>
+@interface MGCImagePage () <UIScrollViewDelegate, UIGestureRecognizerDelegate>
 
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIImageView *imageView;
@@ -18,7 +18,7 @@ static const NSInteger MGCDistanceForClose = 50;
 
 @end
 
-@implementation ImagePage
+@implementation MGCImagePage
 
 - (void)prepareForShow
 {

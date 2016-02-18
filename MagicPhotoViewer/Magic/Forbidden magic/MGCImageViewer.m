@@ -3,23 +3,23 @@
 //
 
 #import "MGCImageViewer.h"
-#import "ImagePage.h"
+#import "MGCImagePage.h"
 
 static const NSInteger MGCPhotosOffset = 5;
 static const CGFloat MGCOpenAnimationTime = 0.3;
 
-@interface MGCImageViewer () <UIScrollViewDelegate, ImagePageDelegate>
+@interface MGCImageViewer () <UIScrollViewDelegate, MGCImagePageDelegate>
 
 @property (nonatomic, assign) NSInteger nextPage;
 @property (nonatomic, assign) NSInteger lastPage;
 
 @property (nonatomic, strong) UIScrollView *scrollView;
-@property (nonatomic, strong) NSArray<ImagePage *> *pages;
+@property (nonatomic, strong) NSArray<MGCImagePage *> *pages;
 @property (nonatomic, assign) BOOL isRotation;
 
 @end
 
-@implementation ImageViewer
+@implementation MGCImageViewer
 
 - (void)viewDidLoad
 {
@@ -243,7 +243,7 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
     {
         return;
     }
-    ImagePage *page = self.pages[index];
+    MGCImagePage *page = self.pages[index];
     if (!page.image)
     {
         page.image = [self.dataSource imageViewer:self imageForIndex:index];
@@ -259,7 +259,7 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
     {
         return;
     }
-    ImagePage *page = self.pages[index];
+    MGCImagePage *page = self.pages[index];
     page.image = nil;
 }
 
@@ -269,7 +269,7 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
     NSMutableArray *pages = [NSMutableArray new];
     for (NSInteger index = 0; index < count; index++)
     {
-        ImagePage *page = [ImagePage new];
+        MGCImagePage *page = [MGCImagePage new];
         page.containerView = self.view;
         page.delegate = self;
         page.index = index;
@@ -346,7 +346,7 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
     __block CGRect rect = self.scrollView.bounds;
     NSInteger width = CGRectGetWidth(rect);
     rect.size.width -= MGCPhotosOffset * 2;
-    [self.pages enumerateObjectsUsingBlock:^(ImagePage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    [self.pages enumerateObjectsUsingBlock:^(MGCImagePage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         rect.origin.x = width * idx + MGCPhotosOffset;
         obj.frame = rect;
     }];

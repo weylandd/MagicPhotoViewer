@@ -18,7 +18,7 @@
 		FA706D8C1C6E8A53003CF644 /* CustomImageViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = FA706D8B1C6E8A53003CF644 /* CustomImageViewer.m */; };
 		FAA980561C6D2034008D4FC1 /* CollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980551C6D2034008D4FC1 /* CollectionCell.m */; };
 		FAA980741C6E1EF7008D4FC1 /* MGCImageViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA9806F1C6E1EF7008D4FC1 /* MGCImageViewer.m */; };
-		FAA980751C6E1EF7008D4FC1 /* ImagePage.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980711C6E1EF7008D4FC1 /* ImagePage.m */; };
+		FAA980751C6E1EF7008D4FC1 /* MGCImagePage.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980711C6E1EF7008D4FC1 /* MGCImagePage.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,8 +42,8 @@
 		FAA980551C6D2034008D4FC1 /* CollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CollectionCell.m; sourceTree = "<group>"; };
 		FAA9806E1C6E1EF7008D4FC1 /* MGCImageViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGCImageViewer.h; sourceTree = "<group>"; };
 		FAA9806F1C6E1EF7008D4FC1 /* MGCImageViewer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGCImageViewer.m; sourceTree = "<group>"; };
-		FAA980701C6E1EF7008D4FC1 /* ImagePage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImagePage.h; sourceTree = "<group>"; };
-		FAA980711C6E1EF7008D4FC1 /* ImagePage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagePage.m; sourceTree = "<group>"; };
+		FAA980701C6E1EF7008D4FC1 /* MGCImagePage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGCImagePage.h; sourceTree = "<group>"; };
+		FAA980711C6E1EF7008D4FC1 /* MGCImagePage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGCImagePage.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,8 +127,8 @@
 			children = (
 				FAA9806E1C6E1EF7008D4FC1 /* MGCImageViewer.h */,
 				FAA9806F1C6E1EF7008D4FC1 /* MGCImageViewer.m */,
-				FAA980701C6E1EF7008D4FC1 /* ImagePage.h */,
-				FAA980711C6E1EF7008D4FC1 /* ImagePage.m */,
+				FAA980701C6E1EF7008D4FC1 /* MGCImagePage.h */,
+				FAA980711C6E1EF7008D4FC1 /* MGCImagePage.m */,
 			);
 			path = "Forbidden magic";
 			sourceTree = "<group>";
@@ -204,7 +204,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA20CF011C6D1E2E0002ACD9 /* View.m in Sources */,
-				FAA980751C6E1EF7008D4FC1 /* ImagePage.m in Sources */,
+				FAA980751C6E1EF7008D4FC1 /* MGCImagePage.m in Sources */,
 				FAA980561C6D2034008D4FC1 /* CollectionCell.m in Sources */,
 				FAA980741C6E1EF7008D4FC1 /* MGCImageViewer.m in Sources */,
 				FA20CEEF1C6D1CF50002ACD9 /* ViewController.m in Sources */,
