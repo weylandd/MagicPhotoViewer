@@ -8,53 +8,99 @@
 
 #import "ViewController.h"
 #import "View.h"
+#import "ImageViewModel.h"
 
-#import "MagicPhotoViewer.h"
+#import "CustomImageViewer.h"
 
-@interface ViewController () <CollectionCellDelegate, UICollectionViewDelegate, UICollectionViewDataSource>
+static const NSInteger MGCCollectionViewNumberOfCells = 30;
+
+@interface ViewController () <CollectionCellDelegate, UICollectionViewDelegate, UICollectionViewDataSource, CustomImageViewerDelegate, CustomImageViewerDataSource>
 
 @property (nonatomic, strong) View *mainView;
-@property (nonatomic, assign) NSInteger currentIndex;
+@property (nonatomic, strong) ImageViewer *imageViewer;
+
+@property (nonatomic, strong) NSArray *imageModels;
 
 @end
 
 @implementation ViewController
 
+- (void)cellDidSelectedWithIndex:(NSInteger)index
+{
+    ImageViewer *imageViewer = [ImageViewer new];
+    imageViewer.delegate = self;
+    imageViewer.dataSource = self;
+    [imageViewer openFromViewController:self withCurrentIndex:index];
+}
+
+#pragma mark - <PhotoControllerDataSource>
+
+- (UIImageView *)imageViewer:(ImageViewer *)imageViewer imageViewForAnimationWithIndex:(NSInteger)index
+{
+    NSIndexPath *path = [NSIndexPath indexPathForRow:index inSection:0];
+    CollectionCell *cell = (CollectionCell *)[self.mainView.collectionView cellForItemAtIndexPath:path];
+    return cell.imageView;
+}
+
+- (UIImage *)imageViewer:(ImageViewer *)imageViewer imageForIndex:(NSInteger)index
+{
+    ImageViewModel *imageModel = self.imageModels[index];
+    return imageModel.imageForCollection;
+}
+
+- (NSUInteger)numberOfItemsImageViewer:(ImageViewer *)imageViewer
+{
+    return self.imageModels.count;
+}
+
+#pragma mark - <PhotoControllerDelegate>
+
+- (void)imageViewer:(ImageViewer *)imageViewer prepareImageViewForAnimationWithIndex:(NSInteger)index
+{
+    NSIndexPath *path = [NSIndexPath indexPathForRow:index inSection:0];
+    [self.mainView.collectionView scrollToItemAtIndexPath:path atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
+}
+
+- (void)imageViewerWillClose:(ImageViewer *)imageViewer
+{
+    NSLog(@"imageViewerWillClose");
+}
+
+
+
+
+
+// it does not matter
+// ----------------------------------------------------------------------------------------------
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view = self.mainView;
-    self.mainView.collectionView.delegate = self;
-    self.mainView.collectionView.dataSource = self;
+    [self _prepareModels];
+    [self _setupInitialState];
 }
 
 #pragma mark - <CollectionCellDelegate>
 
 - (void)cellDidSelected:(CollectionCell *)cell
 {
-    [[MagicPhotoViewer sharedInstance] openPhotos:[self _imageViewsWithSelectedCell:cell] currentIndex:self.currentIndex close:nil];
-}
-
-#pragma mark - <UICollectionViewDelegate>
-
-- (void)collectionView:(UICollectionView *)collectionView willDisplayCell:(UICollectionViewCell *)cell forItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    CollectionCell *collectionCell = (CollectionCell *)cell;
-    collectionCell.imageView.image = [UIImage imageNamed:@"magicImage"];
+    [self cellDidSelectedWithIndex:cell.index];
 }
 
 #pragma mark - <UICollectionViewDataSource>
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return 30;
+    return self.imageModels.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     CollectionCell *cell = [self.mainView.collectionView dequeueReusableCellWithReuseIdentifier:CollectionCellReuseIdentifier forIndexPath:indexPath];
+    ImageViewModel *imageModel = self.imageModels[indexPath.row];
     cell.delegate = self;
     cell.index = indexPath.row;
+    cell.imageView.image = imageModel.imageForCollection;
     return cell;
 }
 
@@ -78,26 +124,23 @@
 
 #pragma mark - Private
 
-- (NSArray *)_visibleCells
+- (void)_setupInitialState
 {
-    NSMutableArray *cells = [NSMutableArray arrayWithArray:self.mainView.collectionView.visibleCells];
-    [cells sortUsingComparator:^NSComparisonResult(CollectionCell * _Nonnull obj1, CollectionCell * _Nonnull obj2) {
-        return obj1.index > obj2.index;
-    }];
-    return cells;
+    self.view = self.mainView;
+    self.mainView.collectionView.delegate = self;
+    self.mainView.collectionView.dataSource = self;
 }
 
-- (NSArray *)_imageViewsWithSelectedCell:(CollectionCell *)selectedCell
+- (void)_prepareModels
 {
-    NSMutableArray *imageViews = [NSMutableArray new];
-    [[self _visibleCells] enumerateObjectsUsingBlock:^(CollectionCell * _Nonnull cell, NSUInteger idx, BOOL * _Nonnull stop) {
-        [imageViews addObject:cell.imageView];
-        if ([cell isEqual:selectedCell])
-        {
-            self.currentIndex = idx;
-        }
-    }];
-    return imageViews;
+    NSMutableArray *models = [NSMutableArray new];
+    for (NSInteger i = 0; i < MGCCollectionViewNumberOfCells; i++)
+    {
+        ImageViewModel *model = [ImageViewModel new];
+        model.imageForCollection = [UIImage imageNamed:@"magicImage"];
+        [models addObject:model];
+    }
+    self.imageModels = models;
 }
 
 #pragma mark - Lazy initialization

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FA06283C1C75FA1000A2B90B /* ImageViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = FA06283B1C75FA1000A2B90B /* ImageViewModel.m */; };
 		FA20CEE91C6D1CF50002ACD9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FA20CEE81C6D1CF50002ACD9 /* main.m */; };
 		FA20CEEC1C6D1CF50002ACD9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FA20CEEB1C6D1CF50002ACD9 /* AppDelegate.m */; };
 		FA20CEEF1C6D1CF50002ACD9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA20CEEE1C6D1CF50002ACD9 /* ViewController.m */; };
@@ -18,10 +19,11 @@
 		FAA980561C6D2034008D4FC1 /* CollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980551C6D2034008D4FC1 /* CollectionCell.m */; };
 		FAA980741C6E1EF7008D4FC1 /* ImageViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA9806F1C6E1EF7008D4FC1 /* ImageViewer.m */; };
 		FAA980751C6E1EF7008D4FC1 /* ImagePage.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980711C6E1EF7008D4FC1 /* ImagePage.m */; };
-		FAA980761C6E1EF7008D4FC1 /* MagicPhotoViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = FAA980731C6E1EF7008D4FC1 /* MagicPhotoViewer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FA06283A1C75FA1000A2B90B /* ImageViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewModel.h; sourceTree = "<group>"; };
+		FA06283B1C75FA1000A2B90B /* ImageViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewModel.m; sourceTree = "<group>"; };
 		FA20CEE41C6D1CF50002ACD9 /* MagicPhotoViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MagicPhotoViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA20CEE81C6D1CF50002ACD9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		FA20CEEA1C6D1CF50002ACD9 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -42,8 +44,6 @@
 		FAA9806F1C6E1EF7008D4FC1 /* ImageViewer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewer.m; sourceTree = "<group>"; };
 		FAA980701C6E1EF7008D4FC1 /* ImagePage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImagePage.h; sourceTree = "<group>"; };
 		FAA980711C6E1EF7008D4FC1 /* ImagePage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagePage.m; sourceTree = "<group>"; };
-		FAA980721C6E1EF7008D4FC1 /* MagicPhotoViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicPhotoViewer.h; sourceTree = "<group>"; };
-		FAA980731C6E1EF7008D4FC1 /* MagicPhotoViewer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicPhotoViewer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +85,8 @@
 				FA20CF001C6D1E2E0002ACD9 /* View.m */,
 				FAA980541C6D2034008D4FC1 /* CollectionCell.h */,
 				FAA980551C6D2034008D4FC1 /* CollectionCell.m */,
+				FA06283A1C75FA1000A2B90B /* ImageViewModel.h */,
+				FA06283B1C75FA1000A2B90B /* ImageViewModel.m */,
 				FA20CEF01C6D1CF50002ACD9 /* Main.storyboard */,
 				FA20CEF31C6D1CF50002ACD9 /* Assets.xcassets */,
 				FA20CEF51C6D1CF50002ACD9 /* LaunchScreen.storyboard */,
@@ -116,8 +118,6 @@
 			children = (
 				FA706D891C6E8A1C003CF644 /* Your custom magic */,
 				FAA9806D1C6E1EF7008D4FC1 /* Forbidden magic */,
-				FAA980721C6E1EF7008D4FC1 /* MagicPhotoViewer.h */,
-				FAA980731C6E1EF7008D4FC1 /* MagicPhotoViewer.m */,
 			);
 			path = Magic;
 			sourceTree = "<group>";
@@ -210,8 +210,8 @@
 				FA20CEEF1C6D1CF50002ACD9 /* ViewController.m in Sources */,
 				FA706D8C1C6E8A53003CF644 /* CustomImageViewer.m in Sources */,
 				FA20CEEC1C6D1CF50002ACD9 /* AppDelegate.m in Sources */,
-				FAA980761C6E1EF7008D4FC1 /* MagicPhotoViewer.m in Sources */,
 				FA20CEE91C6D1CF50002ACD9 /* main.m in Sources */,
+				FA06283C1C75FA1000A2B90B /* ImageViewModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

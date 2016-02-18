@@ -2,7 +2,7 @@
 //  PhotoContentView.h
 //
 
-#import "MagicPhotoViewer.h"
+#import <UIKit/UIKit.h>
 @protocol ImageViewerDelegate;
 @protocol ImageViewerDataSource;
 
@@ -13,21 +13,25 @@
 
 @property (nonatomic, strong) UIView *contentView;
 @property (nonatomic, assign) NSInteger currentPage;
-@property (nonatomic, strong) CodeBlock closeBlock;
 
-- (void)setupInitialState;
-
-- (void)openPhotos:(NSArray<UIImageView *> *)photos currentIndex:(NSInteger)index close:(CodeBlock)close;
+- (void)openFromViewController:(UIViewController *)viewController withCurrentIndex:(NSInteger)currentIndex;
 
 @end
 
 @protocol ImageViewerDelegate <NSObject>
+@optional
+
+- (void)imageViewerWillClose:(ImageViewer *)imageViewer;
+
+- (void)imageViewer:(ImageViewer *)imageViewer prepareImageViewForAnimationWithIndex:(NSInteger)index;
 
 @end
 
 @protocol ImageViewerDataSource <NSObject>
 
-- (UIImageView *)imageViewer:(ImageViewer *)imageViewer imageViewForIndex:(NSInteger)index;
+- (UIImageView *)imageViewer:(ImageViewer *)imageViewer imageViewForAnimationWithIndex:(NSInteger)index;
+
+- (UIImage *)imageViewer:(ImageViewer *)imageViewer imageForIndex:(NSInteger)index;
 
 - (NSUInteger)numberOfItemsImageViewer:(ImageViewer *)imageViewer;
 

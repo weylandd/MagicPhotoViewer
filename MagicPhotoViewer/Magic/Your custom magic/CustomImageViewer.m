@@ -22,11 +22,10 @@
     [self setNeedsStatusBarAppearanceUpdate];
 }
 
-- (void)setupInitialState
+- (void)openFromViewController:(UIViewController *)viewController withCurrentIndex:(NSInteger)currentIndex
 {
-    [super setupInitialState];
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction)];
-    [self.contentView addGestureRecognizer:tap];
+    [self _setup];
+    [super openFromViewController:viewController withCurrentIndex:currentIndex];
 }
 
 #pragma mark - Actions
@@ -46,8 +45,8 @@
 
 - (void)actionButtonTapped
 {
-    UIImageView *image = [self.customDataSource imageViewer:self imageViewForIndex:self.currentPage];
-    UIActivityViewController *activityController = [[UIActivityViewController alloc] initWithActivityItems:@[image.image] applicationActivities:nil];
+    UIImage *image = [self.customDataSource imageViewer:self imageForIndex:self.currentPage];
+    UIActivityViewController *activityController = [[UIActivityViewController alloc] initWithActivityItems:@[image] applicationActivities:nil];
     [self presentViewController:activityController animated:YES completion:nil];
 }
 
@@ -81,7 +80,7 @@
 
 - (void)_closeAnimationCompleted:(void(^)())completed
 {
-    UIImageView *image = [self.customDataSource imageViewer:self imageViewForIndex:self.currentPage];
+    UIImageView *image = [self.customDataSource imageViewer:self imageViewForAnimationWithIndex:self.currentPage];
     image.hidden = NO;
     [UIView animateWithDuration:0.3 animations:^{
         self.view.alpha = 0;
@@ -95,13 +94,16 @@
 
 #pragma mark - Private
 
+- (void)_setup
+{
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction)];
+    [self.contentView addGestureRecognizer:tap];
+}
+
 - (void)_dismiss
 {
     [self dismissViewControllerAnimated:NO completion:^{
-        if (self.closeBlock)
-        {
-            self.closeBlock();
-        }
+        [self.delegate imageViewerWillClose:self];
     }];
 }
 
@@ -117,7 +119,6 @@
 {
     CGRect rect = self.view.bounds;
     rect.size.height = CGRectGetWidth(rect) < CGRectGetHeight(rect)? 64: 30;
-    self.navigationBar.frame = rect;
     self.navigationBar.frame = rect;
 }
 

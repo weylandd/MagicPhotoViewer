@@ -26,30 +26,21 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
     [super viewDidLoad];
 }
 
-- (void)setupInitialState
+- (void)openFromViewController:(UIViewController *)viewController withCurrentIndex:(NSInteger)currentIndex
 {
-    self.contentView.alpha = 0;
-    self.contentView.backgroundColor = [UIColor blackColor];
-    self.contentView.userInteractionEnabled = NO;
-}
-
-- (void)openPhotos:(NSArray<UIImageView *> *)photos currentIndex:(NSInteger)index close:(CodeBlock)close
-{
-    self.currentPage = index;
-    self.closeBlock = close;
-    [self _createPages];
-    [self _layoutScrollView];
-    [self _layoutPages];
-    [self _openAnimation];
-    [self _preparePage:index];
+    [self _setupInitialState];
+    [self setModalPresentationStyle:UIModalPresentationOverCurrentContext];
+    [viewController presentViewController:self animated:NO completion:^{
+        [self _prepareToOpenWithCurrentIndex:currentIndex];
+    }];
 }
 
 #pragma mark - Setters
 
 - (void)setCurrentPage:(NSInteger)currentPage
 {
-    UIImageView *lastImageView = [self.dataSource imageViewer:self imageViewForIndex:_currentPage];
-    UIImageView *newImageView = [self.dataSource imageViewer:self imageViewForIndex:currentPage];
+    UIImageView *lastImageView = [self.dataSource imageViewer:self imageViewForAnimationWithIndex:_currentPage];
+    UIImageView *newImageView = [self.dataSource imageViewer:self imageViewForAnimationWithIndex:currentPage];
     _currentPage = currentPage;
     
     lastImageView.hidden = NO;
@@ -116,16 +107,13 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
 - (void)_dismiss
 {
     [self dismissViewControllerAnimated:NO completion:^{
-        if (self.closeBlock)
-        {
-            self.closeBlock();
-        }
+        [self.delegate imageViewerWillClose:self];
     }];
 }
 
 - (void)_openAnimation
 {
-    UIImageView *image = [self.dataSource imageViewer:self imageViewForIndex:self.currentPage];
+    UIImageView *image = [self.dataSource imageViewer:self imageViewForAnimationWithIndex:self.currentPage];
     if (!image)
     {
         [self _dismiss];
@@ -149,7 +137,7 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
 
 - (void)_closeAnimationWith:(UIImageView *)photo completed:(void(^)())completed
 {
-    UIImageView *image = [self.dataSource imageViewer:self imageViewForIndex:self.currentPage];
+    UIImageView *image = [self.dataSource imageViewer:self imageViewForAnimationWithIndex:self.currentPage];
     CGRect rect = [image convertRect:image.frame toView:nil];
     [UIView animateWithDuration:MGCCloseAnimationDuration animations:^{
         photo.frame = rect;
@@ -222,10 +210,30 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
 
 #pragma mark - Private methods
 
+- (void)_setupInitialState
+{
+    self.contentView.alpha = 0;
+    self.contentView.backgroundColor = [UIColor blackColor];
+    self.contentView.userInteractionEnabled = NO;
+}
+
+- (void)_prepareToOpenWithCurrentIndex:(NSInteger)currentIndex
+{
+    self.currentPage = currentIndex;
+    [self _createPages];
+    [self _layoutScrollView];
+    [self _layoutPages];
+    [self _openAnimation];
+    [self _preparePage:currentIndex];
+}
+
 - (void)_prepareTwoPages
 {
     [self _preparePage:self.currentPage + 1];
     [self _preparePage:self.currentPage - 1];
+    
+    [self _cleanPage:self.currentPage + 2];
+    [self _cleanPage:self.currentPage - 2];
 }
 
 - (void)_preparePage:(NSInteger)index
@@ -238,9 +246,21 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
     ImagePage *page = self.pages[index];
     if (!page.image)
     {
-        page.image = [self.dataSource imageViewer:self imageViewForIndex:index].image;
+        page.image = [self.dataSource imageViewer:self imageForIndex:index];
     }
     [page prepareForShow];
+    [self.delegate imageViewer:self prepareImageViewForAnimationWithIndex:index];
+}
+
+- (void)_cleanPage:(NSInteger)index
+{
+    NSInteger count = [self.dataSource numberOfItemsImageViewer:self];
+    if (index < 0 || index >= count)
+    {
+        return;
+    }
+    ImagePage *page = self.pages[index];
+    page.image = nil;
 }
 
 - (void)_createPages
