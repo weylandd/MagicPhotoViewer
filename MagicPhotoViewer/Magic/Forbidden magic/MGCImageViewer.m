@@ -2,13 +2,13 @@
 //  PhotoContentView.m
 //
 
-#import "ImageViewer.h"
+#import "MGCImageViewer.h"
 #import "ImagePage.h"
 
 static const NSInteger MGCPhotosOffset = 5;
 static const CGFloat MGCOpenAnimationTime = 0.3;
 
-@interface ImageViewer () <UIScrollViewDelegate, ImagePageDelegate>
+@interface MGCImageViewer () <UIScrollViewDelegate, ImagePageDelegate>
 
 @property (nonatomic, assign) NSInteger nextPage;
 @property (nonatomic, assign) NSInteger lastPage;

@@ -17,7 +17,7 @@ static const NSInteger MGCCollectionViewNumberOfCells = 30;
 @interface ViewController () <CollectionCellDelegate, UICollectionViewDelegate, UICollectionViewDataSource, CustomImageViewerDelegate, CustomImageViewerDataSource>
 
 @property (nonatomic, strong) View *mainView;
-@property (nonatomic, strong) ImageViewer *imageViewer;
+@property (nonatomic, strong) MGCImageViewer *imageViewer;
 
 @property (nonatomic, strong) NSArray *imageModels;
 
@@ -27,7 +27,7 @@ static const NSInteger MGCCollectionViewNumberOfCells = 30;
 
 - (void)cellDidSelectedWithIndex:(NSInteger)index
 {
-    ImageViewer *imageViewer = [ImageViewer new];
+    MGCImageViewer *imageViewer = [MGCImageViewer new];
     imageViewer.delegate = self;
     imageViewer.dataSource = self;
     [imageViewer openFromViewController:self withCurrentIndex:index];
@@ -35,33 +35,33 @@ static const NSInteger MGCCollectionViewNumberOfCells = 30;
 
 #pragma mark - <PhotoControllerDataSource>
 
-- (UIImageView *)imageViewer:(ImageViewer *)imageViewer imageViewForAnimationWithIndex:(NSInteger)index
+- (UIImageView *)imageViewer:(MGCImageViewer *)imageViewer imageViewForAnimationWithIndex:(NSInteger)index
 {
     NSIndexPath *path = [NSIndexPath indexPathForRow:index inSection:0];
     CollectionCell *cell = (CollectionCell *)[self.mainView.collectionView cellForItemAtIndexPath:path];
     return cell.imageView;
 }
 
-- (UIImage *)imageViewer:(ImageViewer *)imageViewer imageForIndex:(NSInteger)index
+- (UIImage *)imageViewer:(MGCImageViewer *)imageViewer imageForIndex:(NSInteger)index
 {
     ImageViewModel *imageModel = self.imageModels[index];
     return imageModel.imageForCollection;
 }
 
-- (NSUInteger)numberOfItemsImageViewer:(ImageViewer *)imageViewer
+- (NSUInteger)numberOfItemsImageViewer:(MGCImageViewer *)imageViewer
 {
     return self.imageModels.count;
 }
 
 #pragma mark - <PhotoControllerDelegate>
 
-- (void)imageViewer:(ImageViewer *)imageViewer prepareImageViewForAnimationWithIndex:(NSInteger)index
+- (void)imageViewer:(MGCImageViewer *)imageViewer prepareImageViewForAnimationWithIndex:(NSInteger)index
 {
     NSIndexPath *path = [NSIndexPath indexPathForRow:index inSection:0];
     [self.mainView.collectionView scrollToItemAtIndexPath:path atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
 }
 
-- (void)imageViewerWillClose:(ImageViewer *)imageViewer
+- (void)imageViewerWillClose:(MGCImageViewer *)imageViewer
 {
     NSLog(@"imageViewerWillClose");
 }

@@ -6,21 +6,21 @@
 //  Copyright © 2016 Alex Kopachev. All rights reserved.
 //
 
-#import "ImageViewer.h"
+#import "MGCImageViewer.h"
 @protocol CustomImageViewerDelegate;
 @protocol CustomImageViewerDataSource;
 
-@interface CustomImageViewer : ImageViewer
+@interface CustomImageViewer : MGCImageViewer
 
 @property (nonatomic, weak) id <CustomImageViewerDelegate> customDelegate;
 @property (nonatomic, weak) id <CustomImageViewerDataSource> customDataSource;
 
 @end
 
-@protocol CustomImageViewerDelegate <ImageViewerDelegate>
+@protocol CustomImageViewerDelegate <MGCImageViewerDelegate>
 
 @end
 
-@protocol CustomImageViewerDataSource <ImageViewerDataSource>
+@protocol CustomImageViewerDataSource <MGCImageViewerDataSource>
 
 @end
