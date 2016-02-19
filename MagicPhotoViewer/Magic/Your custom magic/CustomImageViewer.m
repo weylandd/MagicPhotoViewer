@@ -103,7 +103,10 @@
 - (void)_dismiss
 {
     [self dismissViewControllerAnimated:NO completion:^{
-        [self.delegate imageViewerWillClose:self];
+        if ([self.delegate respondsToSelector:@selector(imageViewerWillClose:)])
+        {
+            [self.delegate imageViewerWillClose:self];
+        }
     }];
 }
 

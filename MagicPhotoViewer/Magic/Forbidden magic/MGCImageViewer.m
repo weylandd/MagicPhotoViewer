@@ -16,6 +16,7 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) NSArray<MGCImagePage *> *pages;
 @property (nonatomic, assign) BOOL isRotation;
+@property (nonatomic, assign) BOOL isInitialed;
 
 @end
 
@@ -28,7 +29,7 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
 
 - (void)openFromViewController:(UIViewController *)viewController withCurrentIndex:(NSInteger)currentIndex
 {
-    [self _setupInitialState];
+    [self _setupInitialStateWithIndex:currentIndex];
     [self setModalPresentationStyle:UIModalPresentationOverCurrentContext];
     [viewController presentViewController:self animated:NO completion:^{
         [self _prepareToOpenWithCurrentIndex:currentIndex];
@@ -61,7 +62,7 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (self.isRotation)
+    if (self.isRotation || self.isInitialed)
     {
         return;
     }
@@ -107,7 +108,10 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
 - (void)_dismiss
 {
     [self dismissViewControllerAnimated:NO completion:^{
-        [self.delegate imageViewerWillClose:self];
+        if ([self.delegate respondsToSelector:@selector(imageViewerWillClose:)])
+        {
+            [self.delegate imageViewerWillClose:self];
+        }
     }];
 }
 
@@ -210,11 +214,25 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
 
 #pragma mark - Private methods
 
-- (void)_setupInitialState
+- (void)_setupInitialStateWithIndex:(NSInteger)index
 {
+    self.isInitialed = YES;
+    [self _cleanScrollView];
+    _currentPage = index;
     self.contentView.alpha = 0;
     self.contentView.backgroundColor = [UIColor blackColor];
     self.contentView.userInteractionEnabled = NO;
+}
+
+- (void)_cleanScrollView
+{
+    for (MGCImagePage *page in self.pages)
+    {
+        page.image = nil;
+        [page removeFromSuperview];
+    }
+    self.pages = nil;
+    self.scrollView.contentSize = CGSizeZero;
 }
 
 - (void)_prepareToOpenWithCurrentIndex:(NSInteger)currentIndex
@@ -225,6 +243,8 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
     [self _layoutPages];
     [self _openAnimation];
     [self _preparePage:currentIndex];
+    [self _prepareTwoPages];
+    self.isInitialed = NO;
 }
 
 - (void)_prepareTwoPages
@@ -249,7 +269,10 @@ static const CGFloat MGCOpenAnimationTime = 0.3;
         page.image = [self.dataSource imageViewer:self imageForIndex:index];
     }
     [page prepareForShow];
-    [self.delegate imageViewer:self prepareImageViewForAnimationWithIndex:index];
+    if ([self.delegate respondsToSelector:@selector(imageViewer:prepareImageViewForAnimationWithIndex:)])
+    {
+        [self.delegate imageViewer:self prepareImageViewForAnimationWithIndex:index];
+    }
 }
 
 - (void)_cleanPage:(NSInteger)index

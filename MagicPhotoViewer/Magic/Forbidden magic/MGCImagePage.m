@@ -200,13 +200,22 @@ static const NSInteger MGCDistanceForClose = 50;
 - (void)_closeFailedAnimation
 {
     [UIView animateWithDuration:MGCCloseAnimationDuration animations:^{
-        self.imageViewCopy.frame = self.imageView.frame;
+        self.imageViewCopy.frame = [self _imageViewCorrectlyFrame];
     } completion:^(BOOL finished) {
         self.imageView.hidden = NO;
         [self.imageViewCopy removeFromSuperview];
         self.imageViewCopy = nil;
         self.userInteractionEnabled = YES;
     }];
+}
+
+- (CGRect)_imageViewCorrectlyFrame
+{
+    CGRect rect = self.imageView.frame;
+    CGPoint contentOffset = self.scrollView.contentOffset;
+    rect.origin.x -= contentOffset.x;
+    rect.origin.y -= contentOffset.y;
+    return rect;
 }
 
 - (void)_moveImageViewCopyWithDisplacement:(CGPoint)displacement progress:(CGFloat)progress
@@ -351,7 +360,8 @@ static const NSInteger MGCDistanceForClose = 50;
         _scrollView = [UIScrollView new];
         _scrollView.showsHorizontalScrollIndicator = NO;
         _scrollView.showsVerticalScrollIndicator = NO;
-        _scrollView.alwaysBounceVertical = YES;
+        _scrollView.alwaysBounceVertical = NO;
+        _scrollView.alwaysBounceHorizontal = NO;
         _scrollView.delegate = self;
         [self addSubview:_scrollView];
     }
